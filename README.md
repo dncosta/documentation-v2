@@ -929,9 +929,26 @@ amount.subtotals	| Aditional values.	| structured
 installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
 delayCapture	| Used if you need to pre-capture a payment. Only available for credit cards. |	boolean
 fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
-fundingInstruments.creditCard |	Credit card. |	object CreditCard
-fundingInstruments.boleto	| Information to be inserted on a payment slip. |	structured object Boleto
-fundingInstruments.onlineBankDebit	| Infos of bank online debit.	| object Débito online
+fundingInstruments.creditCard.id | Credit card ID. This ID can be used in the future to create new payments. Internal reference. | string, conditional 
+fundingInstruments.creditCard.hash | Encripted credit card data | string, condicional
+fundingInstruments.creditCard.number | Credit Card number. Requires PCI certification. | string(19), conditional
+fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
+fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
+fundingInstruments.creditCard.cvc | Credit card security code. | integer, opcional
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), mandatory*
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. | 	date(AAAA-MM-DD), mandatory*
+fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
+fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
+fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
+fundingInstruments.boleto.expirationDate | Payment slip expiration date | 	date, mandatory
+fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
+fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
+fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
+fundingInstruments.boleto.logoUri | Logo that will be inserted on payment slip | link, optional
+fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, condicional
+fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, condicional
+fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, condicional
 fees.type	| Fee type. Possible values: TRANSACTION, PRE_PAYMENT.	| string
 fees.amount	| Amount charged. In cents Ex: R$10,32 must be informed as 1032 	| integer(12)
 events.createdAt |	Event date.	| date(AAAA-MM-DD), response
@@ -946,6 +963,10 @@ _links.self.href	| URI to the resource. |	link
 _links.order.title	| Order ID. |	string
 _links.order.href	| Hyperlink to the order.	| link
 _links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
+
+**When using credit card id to create payments, these attribute are not mandatory.**
+
+
 
 ## Create a payment
 
