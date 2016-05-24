@@ -28,6 +28,7 @@ code | ERROR ID | string
 path | Attribute related to the error | string
 description | A brief description (in portuguese) | string
 
+
 All mapped errors will return a http status 4xx to your application. If you get a 5xx error, please send us an email giving details of your request and we'll fix it asap.
 
  * 400 errors - Must be treated from your application. The APIs will return a JSON with details of the problem.
@@ -3068,10 +3069,53 @@ Content-Type: application/json
 }
 ```
 
+# OAuth
 
+OAuth permissions allows you to obtain information of other Moip accounts in order to create order and payments where these account are involved as receivers.
 
+To do so, you'll need basically finish 3 steps:
 
+* Register your APP
+* Ask permissions
+* Generate accessToken
 
+## Registering your APP
+
+To act on behalf of other sellers you need to create a Moip APP.
+[Here](http://dev.moip.com.br/app/) you can fill a form that will request to our team the creation of your app, after that you'll receive an email containing:
+
+ * `appId`
+ * `appSecret`
+ * `accessToken`
+
+ With these you can create the link to ask OAuth permissions and generate de `accessToken` from the sellers account.
+ 
+## Asking OAuth permissions
+
+name | description | details
+---- | ----------- | -------
+responseType	| Defines the type os response. Possible values: `CODE` |	string(4), mandatory
+appId |	APP ID.	| string(16) mandatory
+redirectUri	| Redirect URI	| string(255), mandatory
+scope	| Scope of permissions you required. POssible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`	| string(255), mandatory
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
+
+**URL Example:** `https://sandbox.moip.com.br/oauth/authorize?responseType=CODE&appId=APP1A2B3C4D5E6F&redirectUri=https://url.com.br/callback.php&scope=CREATE_ORDERS|VIEW_ORDERS|CREATE_PAYMENTS|VIEW_PAYMENTS`
+
+The page created with the URL above will look like this:
+
+![Moip Page](https://moip.com.br/docs/images/content/moip-connect-pagina-permissao.png)
+
+**REQUEST:**
+```
+``` 
+
+**RESPONSE:** 
+```
+```
 
 
 
