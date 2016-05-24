@@ -1327,6 +1327,7 @@ A refund made on a credit card returns the value refunded in the credit card aut
 Attributes:
 
 name | description | type
+---- | ----------- | ----
 amount	| Amount to be refunded. Ex: R$10,32 must be informed as 1032 | structured, optional
 refundingInstrument.method	| Method to refund a payment. Possible values: BANK_ACCOUNT e MOIP_ACCOUNT. |	string, condicional
 refundingInstrument.bankAccount.type | Bank account type. `CHECKING` or `SAVING` | string, conditional
