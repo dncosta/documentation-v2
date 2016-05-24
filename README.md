@@ -362,3 +362,64 @@ phone	| Customer's phone.	| structured, **optional**
 └─number	| Phone number. |	integer(9), **optional**
 
 # ORDERS
+
+Order is the representation of the product or service being sold. This API allows you to create and retrieve a customer.
+
+Attributes:
+
+name	| description	| details
+---- |------------ | -------
+
+id | 	Order ID.	| string(16), response
+ownId	| Own id of an order. External reference.	| string(65)
+status	| Orders status. Possible values: CREATED, WAITING, PAID, NOT_PAID, REVERTED.	| string, response
+createdAt |	Date when the order was created.	| datetime, response
+amount	| Order amount.	| structured
+├─total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
+├─fees	| Moip fees.	| integer(12), response
+├─refunds |	Total amount refunded.| 	integer(12), response
+├─liquid	| Liquid amount.	| integer(12), response
+├─otherReceivers |	Sum of total amount sent to other receivers. Used by marketplaces. |	integer(12), response
+├─currency	| Currency. Possible values: BRL. |	string
+├─subtotals	| Aditional values.	| structured
+├ ├─shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
+├ ├─addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+├ ├─discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+└ └─items	| Sum of the amount from all items.	| integer(12), response
+items	| Items structure.	| structured list
+├─product |	Name of the product.	| string(256)
+├─quantity	| Quantity of products.	| integer(12)
+├─detail	| Description.	| string(256)
+└─price	| Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032 	| integer(12)
+checkoutPreferences |	Checkout setup.	| structured
+├─redirectUrls	| Redirect URLs.	| string(256)
+├ ├─urlSuccess	| Redirec URL for success payments.	| link
+└ └─urlError	| Redirec URL for failed payments.	| link
+├─installments	| Installments setup.	| structured list
+├ ├─quantity	| Delimiters for installments. Exemple: [1, 3];	| tupla
+├ ├─discount	| Discount for installments number.	| integer
+└ └─addition	| Adition for installments number.	| integer
+shippingAddress	| Shipping address.	| structured Object: Address, response
+customer	| Customer related to the order.	| Cliente
+payments	| Payments attached to the order. For more information take a lookt at the resource payments.	| Payments collection, response
+refunds	| Refunds attached to the order. For more information take a lookt at the resource payments.	| Refunds collection, response
+entries	| Payments related to the order. For more information take a lookt at the resource payments.	| Entries colletion, response
+events	| Events related to the order.	| structured list, response
+├─createdAt |	Event date.	| date(AAAA-MM-DD), response
+├─type	| Event type. Possible values: ORDER.CREATED, ORDER.WAITING, ORDER.PAID, ORDER.NOT_PAID, ORDER.REVERTED.	| string, response
+└─description |	Event description.	| string(65), response
+receivers	| Receivers structure.	| structured list
+├─type	| Receiver type. Possible values: PRIMARY, SECONDARY	| string
+├─moipAccount |	Structure of Moip Account that will receive a payment.	| structured
+├ ├─login	| Login.	| string(256)
+├ ├─fullname |	Name of the account holder.	| string(256)
+├ └─id	| Account ID.	| string(16)
+├─amount	| Structed of values that will be received.	| structured
+├ ├─refunds |	Total amount refunded from this receiver.	| integer(12)
+├ ├─fees	| Total fees charged from this receiver.	| integer(12)
+└ └─total	| Total received. Ex: R$10,32 must be informed as 1032 	| integer(12)
+updatedAt	| Date when the resource was last updated.	| datetime, response
+_links |	Resource links.	| structured, response
+├─self	| Hyperlink to the resource itself.	| structured
+└─└─href	| URI. |	link
+└─checkout	| Links to Moip checkout.	| object Checkout Moip
