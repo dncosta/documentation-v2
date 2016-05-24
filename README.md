@@ -294,4 +294,5 @@ Content-Type: application/json
 **Parameters**
 
 name | 	description | details 
+---- | ------------ | --------
 id	| hash of customer id.	| string(16), **mandatory**
