@@ -135,9 +135,9 @@ taxDocument |	Personal documentation.	| structured
 ├─type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
 └─number	| Document number.	| string(11)
 shippingAddress |	Shipping address. |	Object Address
-fundingInstruments	| Funding instruments. |	structured list
-├─method	| Method used. Possible values: CREDIT_CARD. | 	string
-└─creditCard |	Credit card. |	object CreditCard
+ fundingInstruments	| Funding instruments. |	structured list
+ ├─method	| Method used. Possible values: CREDIT_CARD. | 	string
+ └─creditCard |	Credit card. |	object CreditCard
 createdAt	| Date when the resource were created.	| datetime, response
 _links |	Resource links.	| structured, response
 ├─self	| Hyperlink to the resource itself.	| structured
@@ -963,6 +963,152 @@ Content-Type: application/json
   ]
 }
 ```
+
+# PAYMENTS
+
+A payment represents the financial transaction that happens between a customer and a seller through a credit card, payment slip or any other method. This API allows you to create and retrieve payments.
+
+Attributes
+
+name | description | type
+---- | ----------- | ----
+id | Payment ID | string(16), response
+status | Status of a payment. Possible values: CREATED,WAITING, IN_ANALYSIS, PRE_AUTHORIZED,AUTHORIZED, CANCELLED, REFUNDED, REVERSED, SETTLED. | string, response
+amount	| Order amount.	| structured
+├─total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
+├─fees	| Moip fees.	| integer(12), response
+├─refunds |	Total amount refunded.| 	integer(12), response
+├─liquid	| Liquid amount.	| integer(12), response
+├─currency	| Currency. Possible values: BRL. |	string
+├─subtotals	| Aditional values.	| structured
+installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
+delayCapture	| Used if you need to pre-capture a payment. Only available for credit cards. |	boolean
+fundingInstruments	| Funding instruments. |	structured list
+├─method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
+└─creditCard |	Credit card. |	object CreditCard
+├─boleto	| Information to be inserted on a payment slip. |	structured object Boleto
+├─onlineBankDebit	| Infos of bank online debit.	| object Débito online
+fees	| Payments fees. |	structured list, response
+├─type	| Fee type. Possible values: TRANSACTION, PRE_PAYMENT.	| string
+└─amount	| Amount charged. In cents Ex: R$10,32 must be informed as 1032 	| integer(12)
+events	| Events related to the payment.	| structured list, response
+├─createdAt |	Event date.	| date(AAAA-MM-DD), response
+├─type	| Event type. Possible values: `PAYMENT.WAIING`, `PAYMENT.AUTHORIZED`, `PAYMENT.IN_ANALYSIS`, `PRE_AUTHORIZED`, `PAYMENT.REFUNDED`, `PAYMENT.REVERSED`	| string, response
+└─description |	Event description.	| string(65), response
+cancellationDetails | Details of payment denial	| structured
+├─cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
+├─code | Denial code | number, response 
+└─description | A brief description of the denial code. | string, response
+updatedAt	| Date when the resource was last updated.	| datetime, response
+createdAt |	Date when the payment was created.	| datetime, response
+_links |	Resource links.	| structured, response
+├─self	| Hyperlink to the resource itself.	| structured
+└─└─href	| URI. |	link
+├─order	| Reference to the order. |	structured
+├ ├─title	| Order ID. |	string
+├ └─href	| Hyperlink to the order.	| link
+└─checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
+
+## Create a payment
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/orders/{order_id}/payments`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "method": "CREDIT_CARD",
+    "creditCard": {
+        "hash": "HhL0kbhfid+jwgj5l6Kt9EPdetDxQN8s7uKUHDYxDC/XoULjzik44rSda3EcWuOcL17Eb8JjWc1JI7gsuwg9P0rJv1mJQx+d3Dv1puQYz1iRjEWWhnB1bw0gTvnnC/05KbWN5M8oTiugmhVK02Rt2gpbcTtpS7VWyacfgesBJFavYYMljYg8p2YGHXkXrMuQiOCeemKLk420d0OTMBba27jDVVJ663HZDrObnjFXJH/4B5irkj+HO5genV+V4PYoLcOESG4nrI3oFAsMGsLLcdJo0NNvkEmJpn0e9GzureKKFYisYU+BEd9EMr/odS0VMvOYRV65HbPTspIkjl2+3Q==",
+      "holder": {
+        "fullname": "Jose Portador da Silva",
+        "birthdate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        }
+      }
+    }
+  }
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "PAY-VZ1HI48256ZX",
+  "status": "IN_ANALYSIS",
+  "amount": {
+    "fees": 187,
+    "refunds": 0,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-V0AAG27AAFG7",
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-01-14T12:17:50-0200",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-01-14T12:17:48-0200",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-VULX1EWDKXHF",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-VULX1EWDKXHF"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-VZ1HI48256ZX"
+    }
+  },
+  "updatedAt": "2015-01-14T12:17:50-0200",
+  "createdAt": "2015-01-14T12:17:48-0200"
+}
+```
+
+
+
 
 
 
