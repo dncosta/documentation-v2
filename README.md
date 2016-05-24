@@ -1066,16 +1066,263 @@ Content-Type: application/json
 }
 ```
 
+## Retrieve a payment
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "PAY-VZ1HI48256ZX",
+  "status": "IN_ANALYSIS",
+  "amount": {
+    "fees": 187,
+    "refunds": 0,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-V0AAG27AAFG7",
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-01-14T12:17:50-0200",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-01-14T12:17:48-0200",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-VULX1EWDKXHF",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-VULX1EWDKXHF"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-VZ1HI48256ZX"
+    }
+  },
+  "updatedAt": "2015-01-14T12:17:50-0200",
+  "createdAt": "2015-01-14T12:17:48-0200"
+}
+```
 
 
+## Capture a pre-authorized payment
 
+This API allows you to capture a payment that is pre-authorized (if you are using the `delayCapture` attribute as `true`).
+If you are using pre_authorized payments on multipayments API, you must use the accessToken from your seller to capture a payment.
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/capture`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+{
+  "id": "PAY-ZJOE0VPNGIM5",
+  "status": "AUTHORIZED",
+  "amount": {
+    "refunds": 0,
+    "fees": 187,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-8XPB5E78J3C5",
+      "brand": "VISA",
+      "first6": "401200",
+      "last4": "3335",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-03-30T09:51:58-0300",
+      "type": "PAYMENT.AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.PRE_AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:38-0300",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-Y3HRHLCNQ4VO",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-Y3HRHLCNQ4VO"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-ZJOE0VPNGIM5"
+    }
+  },
+  "createdAt": "2015-03-30T09:51:38-0300",
+  "updatedAt": "2015-03-30T09:51:58-0300"
+}
+```
+
+## Cancelling a pre-authorized payment
+
+This API allows you to cancel the capture of a pre_authorized payment.
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+{
+  "id": "PAY-ZJOE0VPNGIM5",
+  "status": "CANCELLED",
+  "amount": {
+    "refunds": 0,
+    "fees": 187,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-8XPB5E78J3C5",
+      "brand": "VISA",
+      "first6": "401200",
+      "last4": "3335",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-03-30T09:51:58-0300",
+      "type": "PAYMENT.CANCELLED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.PRE_AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:38-0300",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-Y3HRHLCNQ4VO",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-Y3HRHLCNQ4VO"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-ZJOE0VPNGIM5"
+    }
+  },
+  "createdAt": "2015-03-30T09:51:38-0300",
+  "updatedAt": "2015-03-30T09:51:58-0300"
+}
+```
 
 
 ## ACTION
 
 ### Endpoint
 
-**GET** `https://sandbox.moip.com.br/v2/customers/{customer_id}`
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
 
 **REQUEST:**
 ```
