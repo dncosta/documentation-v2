@@ -1317,6 +1317,414 @@ Content-Type: application/json
 }
 ```
 
+# REFUNDS
+
+This API allows you to refund a payment. This same process is also available on orders.
+
+It is possible to refund payments and order totally ir partially. In case the attribute `amount` is not specified than the API will consider as a total refund.
+A refund made on a credit card returns the value refunded in the credit card automatically. For payment slips and bank debit can be refunded through a bank account or a Moip account. 
+
+Attributes:
+
+name | description | type
+amount	| Amount to be refunded. Ex: R$10,32 must be informed as 1032 | structured, optional
+refundingInstrument.method	| Method to refund a payment. Possible values: BANK_ACCOUNT e MOIP_ACCOUNT. |	string, condicional
+refundingInstrument.bankAccount.type | Bank account type. `CHECKING` or `SAVING` | string, conditional
+refundingInstrument.bankAccount.bankNumber | Bank number. | string, conditional
+refundingInstrument.bankAccount.agencyNumber | Agency number | integer, conditional
+refundingInstrument.bankAccount.agencyCheckNumber | Agency check number | integer, conditional
+refundingInstrument.bankAccount.accountNumber | Bank account | integer, conditional
+refundingInstrument.bankAccount.accountCheckNumber | Bank account check number | integer, conditional
+refundingInstrument.bankAccount.holder.fullname | Bank account holder name | string, conditional 
+refundingInstrument.bankAccount.holder.taxDocument.type | Bank account holder document type | string, conditional 
+refundingInstrument.bankAccount.holder.taxDocument.number | Bank account holder document number | string, conditional 
+
+## Refund a payment
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-BP8AAGSG7OTY",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-26T19:14:25-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-26T19:14:23-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "type": "FULL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-26T19:14:23-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-X2VXEGV7WVFB",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-X2VXEGV7WVFB"
+    },
+    "order": {
+      "title": "ORD-44GC0PFGU42M",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-44GC0PFGU42M"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BP8AAGSG7OTY"
+    }
+  }
+}
+```
+
+## Refund a payment partially
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+    "amount": 1000   
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-I7IEV1RG9T1L",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-27T11:28:11-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-27T11:28:10-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 1000
+  },
+  "type": "PARTIAL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-27T11:28:10-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-3N7TSKQ26L2I",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+    },
+    "order": {
+      "title": "ORD-1RQDM20CQW8T",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-I7IEV1RG9T1L"
+    }
+  }
+}
+```
+
+## Refund an order
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/orders/{order_id}/refunds`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-BP8AAGSG7OTY",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-26T19:14:25-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-26T19:14:23-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "type": "FULL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-26T19:14:23-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-X2VXEGV7WVFB",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-X2VXEGV7WVFB"
+    },
+    "order": {
+      "title": "ORD-44GC0PFGU42M",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-44GC0PFGU42M"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BP8AAGSG7OTY"
+    }
+  }
+}
+```
+
+## Retrieve a refund
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/refunds/{refund_id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "REF-BO0ABQCGVZVD",
+  "status": "COMPLETED",
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 1000
+  },
+  "type": "PARTIAL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-01-13T18:13:06-0200",
+  "_links": {
+    "payment": {
+      "title": "PAY-6N4P8COQU6OS",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-6N4P8COQU6OS"
+    },
+    "order": {
+      "title": "ORD-F78K9QTS1UN6",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-F78K9QTS1UN6"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BO0ABQCGVZVD"
+    }
+  }
+}
+```
+
+## List refunds from a payment
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (Ok)
+Content-Type: application/json
+
+{
+  "refunds": [
+    {
+      "id": "REF-J4DZBVSRSRMU",
+      "status": "COMPLETED",
+      "type": "FULL",
+      "amount": {
+        "fees": 0,
+        "currency": "BRL",
+        "total": 10000
+      },
+      "refundingInstrument": {
+        "method": "CREDIT_CARD",
+        "creditCard": {
+          "brand": "VISA",
+          "first6": "401200",
+          "last4": "3335"
+        }
+      },
+      "events": [
+        {
+          "createdAt": "2015-12-05T18:57:17-0200",
+          "type": "REFUND.COMPLETED"
+        },
+        {
+          "createdAt": "2015-12-05T18:57:15-0200",
+          "type": "REFUND.REQUESTED"
+        }
+      ],
+      "_links": {
+        "payment": {
+          "title": "PAY-3N7TSKQ26L2I",
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+        },
+        "order": {
+          "title": "ORD-1RQDM20CQW8T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/refunds/REF-I7IEV1RG9T1L"
+        }
+      },
+      "createdAt": "2015-12-05T18:57:15-0200"
+    }
+  ]
+}
+```
+
+## List refunds from an order
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (Ok)
+Content-Type: application/json
+
+{
+  "refunds": [
+    {
+      "id": "REF-J4DZBVSRSRMU",
+      "status": "COMPLETED",
+      "type": "FULL",
+      "amount": {
+        "fees": 0,
+        "currency": "BRL",
+        "total": 10000
+      },
+      "refundingInstrument": {
+        "method": "CREDIT_CARD",
+        "creditCard": {
+          "brand": "VISA",
+          "first6": "401200",
+          "last4": "3335"
+        }
+      },
+      "events": [
+        {
+          "createdAt": "2015-12-05T18:57:17-0200",
+          "type": "REFUND.COMPLETED"
+        },
+        {
+          "createdAt": "2015-12-05T18:57:15-0200",
+          "type": "REFUND.REQUESTED"
+        }
+      ],
+      "_links": {
+        "payment": {
+          "title": "PAY-3N7TSKQ26L2I",
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+        },
+        "order": {
+          "title": "ORD-1RQDM20CQW8T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/refunds/REF-J4DZBVSRSRMU"
+        }
+      },
+      "createdAt": "2015-12-05T18:57:15-0200"
+    }
+  ]
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## ACTION
 
