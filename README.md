@@ -219,7 +219,7 @@ Content-Type: application/json
 }
 ```
 
-Parameters:
+**Parameters:**
 
 name | decription | details
 ---- | ---------- | -------
@@ -291,8 +291,74 @@ Content-Type: application/json
 }
 ```
 
-**Parameters**
+**Parameters:**
 
 name | 	description | details 
 ---- | ------------ | --------
 id	| hash of customer id.	| string(16), **mandatory**
+
+## Adding a credit card - POST
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/customers/{customer_id}/fundinginstruments`
+
+**REQUEST:**
+
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "method": "CREDIT_CARD",
+  "creditCard": {
+    "expirationMonth": "05",
+    "expirationYear": "18",
+    "number": "5555666677778884",
+    "cvc": "123",
+    "holder": {
+      "fullname": "Jose Portador da Silva",
+      "birthdate": "1988-12-30",
+      "taxDocument": {
+        "type": "CPF",
+        "number": "33333333333"
+      },
+      "phone": {
+        "countryCode": "55",
+        "areaCode": "11",
+        "number": "66778899"
+      }
+    }
+  }
+}
+``` 
+
+**RESPONSE:**
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "method": "CREDIT_CARD",
+  "creditCard": {
+    "id": "CRC-NLBLOTNB6LLT",
+    "brand": "MASTERCARD",
+    "first6": "555566",
+    "last4": "8884"
+  }
+}
+```
+
+**Parameters:**
+
+name | 	description | details 
+---- | ------------ | --------
+id	| hash of customer id.	| string(16), **mandatory**
+├─method	| Method used. Possible values: CREDIT_CARD. | 	string, **optional**
+└─creditCard |	Credit card. |	object CreditCard, **optional**
+phone	| Customer's phone.	| structured, **optional**
+├─countryCode | 	Country code. Possible value: 55. |	integer(2), **optional**
+├─areaCode	| Areacode. |	integer(2), **optional**
+└─number	| Phone number. |	integer(9), **optional**
+
+# ORDERS
