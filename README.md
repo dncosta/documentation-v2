@@ -37,7 +37,7 @@ All mapped errors will return a http status 4xx to your application. If you get 
  
 Example:
 
-```
+```json
 {
   "errors": [
     {
@@ -146,7 +146,7 @@ _links.self.href  | URI to the resource. |  link
 **POST:** `https://sandbox.moip.com.br/v2/customers`
 
 **REQUEST:**
-```
+```json
 Content-Type: application/json
 Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
 
