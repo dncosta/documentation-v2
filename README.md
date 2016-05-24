@@ -974,40 +974,32 @@ name | description | type
 ---- | ----------- | ----
 id | Payment ID | string(16), response
 status | Status of a payment. Possible values: CREATED,WAITING, IN_ANALYSIS, PRE_AUTHORIZED,AUTHORIZED, CANCELLED, REFUNDED, REVERSED, SETTLED. | string, response
-amount	| Order amount.	| structured
-├─total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
-├─fees	| Moip fees.	| integer(12), response
-├─refunds |	Total amount refunded.| 	integer(12), response
-├─liquid	| Liquid amount.	| integer(12), response
-├─currency	| Currency. Possible values: BRL. |	string
-├─subtotals	| Aditional values.	| structured
+amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
+amount.fees	| Moip fees.	| integer(12), response
+amount.refunds |	Total amount refunded.| 	integer(12), response
+amount.liquid	| Liquid amount.	| integer(12), response
+amount.currency	| Currency. Possible values: BRL. |	string
+amount.subtotals	| Aditional values.	| structured
 installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
 delayCapture	| Used if you need to pre-capture a payment. Only available for credit cards. |	boolean
-fundingInstruments	| Funding instruments. |	structured list
-├─method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
-└─creditCard |	Credit card. |	object CreditCard
-├─boleto	| Information to be inserted on a payment slip. |	structured object Boleto
-├─onlineBankDebit	| Infos of bank online debit.	| object Débito online
-fees	| Payments fees. |	structured list, response
-├─type	| Fee type. Possible values: TRANSACTION, PRE_PAYMENT.	| string
-└─amount	| Amount charged. In cents Ex: R$10,32 must be informed as 1032 	| integer(12)
-events	| Events related to the payment.	| structured list, response
-├─createdAt |	Event date.	| date(AAAA-MM-DD), response
-├─type	| Event type. Possible values: `PAYMENT.WAIING`, `PAYMENT.AUTHORIZED`, `PAYMENT.IN_ANALYSIS`, `PRE_AUTHORIZED`, `PAYMENT.REFUNDED`, `PAYMENT.REVERSED`	| string, response
-└─description |	Event description.	| string(65), response
-cancellationDetails | Details of payment denial	| structured
-├─cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
-├─code | Denial code | number, response 
-└─description | A brief description of the denial code. | string, response
+fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
+fundingInstruments.creditCard |	Credit card. |	object CreditCard
+fundingInstruments.boleto	| Information to be inserted on a payment slip. |	structured object Boleto
+fundingInstruments.onlineBankDebit	| Infos of bank online debit.	| object Débito online
+fees.type	| Fee type. Possible values: TRANSACTION, PRE_PAYMENT.	| string
+fees.amount	| Amount charged. In cents Ex: R$10,32 must be informed as 1032 	| integer(12)
+events.createdAt |	Event date.	| date(AAAA-MM-DD), response
+events.type	| Event type. Possible values: `PAYMENT.WAIING`, `PAYMENT.AUTHORIZED`, `PAYMENT.IN_ANALYSIS`, `PRE_AUTHORIZED`, `PAYMENT.REFUNDED`, `PAYMENT.REVERSED`	| string, response
+events.description |	Event description.	| string(65), response
+cancellationDetails.cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
+cancellationDetails.code | Denial code | number, response 
+cancellationDetails.description | A brief description of the denial code. | string, response
 updatedAt	| Date when the resource was last updated.	| datetime, response
 createdAt |	Date when the payment was created.	| datetime, response
-_links |	Resource links.	| structured, response
-├─self	| Hyperlink to the resource itself.	| structured
-└─└─href	| URI. |	link
-├─order	| Reference to the order. |	structured
-├ ├─title	| Order ID. |	string
-├ └─href	| Hyperlink to the order.	| link
-└─checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
+_links.self.href	| URI to the resource. |	link
+_links.order.title	| Order ID. |	string
+_links.order.href	| Hyperlink to the order.	| link
+_links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
 
 ## Create a payment
 
