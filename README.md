@@ -938,13 +938,13 @@ fundingInstruments.creditCard.number | Credit Card number. Requires PCI certific
 fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
 fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
 fundingInstruments.creditCard.cvc | Credit card security code. | integer, optional
-fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), required*
-fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, required*
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), **required***
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, **required***
 fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
 fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
 fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. | string
 fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
-fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, required
+fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, **required**
 fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
 fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
 fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
@@ -967,7 +967,7 @@ _links.order.title  | Order ID. | string
 _links.order.href | Hyperlink to the order. | link
 _links.checkout | Links to checkout. This link will redirect to the fundingInstrument informed. object Checkout Moip
 
-**When using credit card id to create payments, these attribute are not required.**
+**When using credit card id to create payments, these attribute are not **required**.**
 
 
 
@@ -2390,13 +2390,13 @@ fundingInstruments.creditCard.number | Credit Card number. Requires PCI certific
 fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
 fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
 fundingInstruments.creditCard.cvc | Credit card security code. | integer, optional
-fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), required*
-fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, required*
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), **required***
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, **required***
 fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
 fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
 fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. | string
 fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
-fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, required
+fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, **required**
 fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
 fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
 fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
@@ -3096,10 +3096,10 @@ To act on behalf of other sellers you need to create a Moip APP.
 
 name | description | details
 ---- | ----------- | -------
-responseType  | Defines the type os response. Possible values: `CODE` | string(4), required
-appId | APP ID. | string(16) required
-redirectUri | Redirect URI  | string(255), required
-scope | Scope of permissions you required. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`  | string(255), required
+responseType  | Defines the type os response. Possible values: `CODE` | string(4), **required**
+appId | APP ID. | string(16) **required**
+redirectUri | Redirect URI  | string(255), **required**
+scope | Scope of permissions you **required**. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`  | string(255), **required**
 
 ### Endpoint
 
@@ -3123,11 +3123,11 @@ Attributes:
 
 name | description | details
 ---- | ----------- | -------
-appId |   APP ID |  string(4), required
-appSecret | Chave privada do aplicativo string(32) required
-redirectUri | Redirect URL. Must be the same you used to require permission. |  string required
-grantType | Type of request. Possible values: `AUTHORIZATION_CODE`  | string(18) required
-code  | Code generated when the user gave permission to the APP | string(32) required
+appId |   APP ID |  string(4), **required**
+appSecret | Chave privada do aplicativo string(32) **required**
+redirectUri | Redirect URL. Must be the same you used to require permission. |  string **required**
+grantType | Type of request. Possible values: `AUTHORIZATION_CODE`  | string(18) **required**
+code  | Code generated when the user gave permission to the APP | string(32) **required**
 accessToken | User accessToken. | string(32) response
 access_token |  User accessToken. | genéricos string(32) response
 scope | Scope of permissions granted. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT` | string response
@@ -3173,11 +3173,11 @@ Attributes:
 
 name | description | details 
 ---- | ----------- | -------
-email.address | Email address that will be used as Login. For transparent accounts the email is used only as a reference since there's no communitation between Moip and these accounts. |  string, required
-person.name | Name. | string, required
-person.lastName | Last name.  | string, required
-person.taxDocument.type | Type of document. Possible value: `CPF` for social security number. | string, required
-person.taxDocument.number | Document number. |  string, required
+email.address | Email address that will be used as Login. For transparent accounts the email is used only as a reference since there's no communitation between Moip and these accounts. |  string, **required**
+person.name | Name. | string, **required**
+person.lastName | Last name.  | string, **required**
+person.taxDocument.type | Type of document. Possible value: `CPF` for social security number. | string, **required**
+person.taxDocument.number | Document number. |  string, **required**
 person.identityDocument.type  | Identity document type. Possible values: `RG`. |  string
 person.identityDocument.number  | Number of document. | string
 person.identityDocument.issuer  | Issuer of the document. | string
@@ -3187,20 +3187,20 @@ person.nationality  | Country code according to [ISO-3](http://unstats.un.org/un
 person.birthPlace | Birth place. | string
 person.parents.mother | Mother's name. | string
 person.parents.father | Father's name. | string
-person.phone.countryCode  | Country code. Possible values: `55`. | string, required
-person.phone.areaCode | Area code. | string, required
-person.phone.number | Phone number. | string, required
+person.phone.countryCode  | Country code. Possible values: `55`. | string, **required**
+person.phone.areaCode | Area code. | string, **required**
+person.phone.number | Phone number. | string, **required**
 person.alternativePhones.countryCode  | Country code. Possible values: `55`. | string
 person.alternativePhones.areaCode | Area code. string
 person.alternativePhones.number | Phone number. string
-person.address.street | Street name. | string, required
-person.address.streetNumber | Number. | string, required
+person.address.street | Street name. | string, **required**
+person.address.streetNumber | Number. | string, **required**
 person.address.complement | Complement. | string
-person.address.district | District. | string, required
-person.address.zipCode  | Zip code. |  string, required
-person.address.city | Cidade. string, required
-person.address.state  | State. | string(2), required
-person.address.country  | Country. | string(2), required
+person.address.district | District. | string, **required**
+person.address.zipCode  | Zip code. |  string, **required**
+person.address.city | Cidade. string, **required**
+person.address.state  | State. | string(2), **required**
+person.address.country  | Country. | string(2), **required**
 company.name  | Trading name. | string, conditional
 company.businessName  | Company name. | string, conditional
 company.taxDocument.type  | Company document type. Possible values: `CNPJ`. | string, conditional
@@ -3221,11 +3221,171 @@ company.address.state | State |. string(2), conditional
 company.address.country | Country code according to [ISO-3](http://unstats.un.org/unsd/tradekb/Knowledgebase/Country-Code)| string 
 businessSegment.id  | [Industry ID](http://dev.moip.com.br/referencia-api/#tabela-de-categorias-de-estabelecimento). | string
 site  | Website. | string
-type  | Account type Possible values: `CONSUMER`, `MERCHANT`. Ecommerce platforms and marketplace must use `MERCHANT` for their users. | string, required
+type  | Account type Possible values: `CONSUMER`, `MERCHANT`. Ecommerce platforms and marketplace must use `MERCHANT` for their users. | string, **required**
 transparentAccount  | Used to create transparent account for marketplaces and ecommerce platforms. Theses account are managed by the creator agent and Moip doesn't communicate with them in any way. | boolean
 tosAcceptance.acceptedAt  | Date when the user accepted the contract. | datetime
 tosAcceptance.ip  | IP (internet protocol) | string
 tosAcceptance.userAgent | Agent through whom the user accepted the contract. | string
+
+## Create a Moip Account - POST
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/accounts`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth s4g8gevtyo8w4jv95nr270dutjy5mq0"
+
+{
+    "email": {
+        "address": "DOBXERG0a8@labs.moip.com.br"
+    },
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "taxDocument": {
+            "type": "CPF",
+            "number": "742.520.863-61"
+        }, 
+          "identityDocument": {
+          "type" : "RG",
+          "number": "434322344",
+          "issuer": "SSP",
+          "issueDate": "2000-12-12" 
+          }, 
+        "birthDate": "1990-01-01",
+        "phone": {
+            "countryCode": "55",
+            "areaCode": "11",
+            "number": "965213244"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234-000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "type": "MERCHANT"
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+    "id": "MPA-8307EF11B83E",
+    "channelId": "APP-7KHGFTMYHGLO",
+    "type": "MERCHANT",
+    "transparentAccount": false,
+    "createdAt": "2015-10-29T16:53:25.957Z",
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "birthDate": "1990-01-01",
+        "taxDocument": {
+            "number": "742.520.863-61",
+            "type": "CPF"
+        },
+        "phone": {
+            "number": "965213244",
+            "areaCode": "11",
+            "countryCode": "55"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "email": {
+        "address": "dobxerg0a8@labs.moip.com.br",
+        "confirmed": false
+    },
+    "_links": {
+        "self": {
+            "href": "https://sandbox.moip.com.br/moipaccounts/MPA-8307EF11B83E"
+        }
+    },
+    "login": "dobxerg0a8@labs.moip.com.br",
+    "externalId": "MPA-8307EF11B83E"
+}
+```
+
+## Retrieve a Moip Account - GET
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/accounts/{id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth s4g8gevtyo8w4jv95nr270dutjy5mq0"
+``` 
+
+**RESPONSE:** 
+```
+200 (Ok)
+Content-Type: application/json
+
+{
+    "id": "MPA-8307EF11B83E",
+    "channelId": "APP-7KHGFTMYHGLO",
+    "type": "MERCHANT",
+    "transparentAccount": false,
+    "createdAt": "2015-10-29T16:53:25.957Z",
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "birthDate": "1990-01-01",
+        "taxDocument": {
+            "number": "742.520.863-61",
+            "type": "CPF"
+        },
+        "phone": {
+            "number": "965213244",
+            "areaCode": "11",
+            "countryCode": "55"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "email": {
+        "address": "dobxerg0a8@labs.moip.com.br",
+        "confirmed": false
+    },
+    "_links": {
+        "self": {
+            "href": "https://sandbox.moip.com.br/v2/accounts/MPA-8307EF11B83E"
+        }
+    },
+    "login": "dobxerg0a8@labs.moip.com.br",
+    "externalId": "MPA-8307EF11B83E"
+}
+```
+
+
+
+
 
 
 
