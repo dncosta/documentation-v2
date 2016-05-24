@@ -771,7 +771,7 @@ This endpoint allows you to list orders using filters.
 
 Example with filters: `https://sandbox.moip.com.br/v2/orders?q=pagamento do pedido&filters=status::in(PAID,WAITING)|paymentMethod::in(CREDIT_CARD,BOLETO)|amount::bt(5000,10000)&limit=3&offset=0`
 
-***IMPORTANT:** Make sure you are using URL encode to make requests with filters.*
+_**IMPORTANT:** Make sure you are using URL encode to make requests with filters._
 
 **REQUEST:**
 ```
