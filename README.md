@@ -116,4 +116,131 @@ Once you finish to integrate with the sandbox you need to change your API keys a
 
 # CUSTOMERS
 
+The customer is the user of a service or a person buying a product. This API allows you to create a retrieve a customer objetc.
+
+Customer attributes:
+
+name | decription | details
+---- | ---------- | -------
+id | 	Moip customer's ID.	| string(16), response
+ownId	| Customer's ownId . External reference.	| string(65)
+fullname |	Customer's fullname.	| string(90)
+email	| Customer's email.	| string(45)
+phone	| Customer's phone.	| structured
+├─countryCode | 	Country code. Possible value: 55. |	integer(2)
+├─areaCode	| Areacode. |	integer(2)
+└─number	| Phone number. |	integer(9)
+birthDate	| Customer's birth date.	| date (AAAA-MM-DD)
+taxDocument |	Personal documentation.	| structured
+├─type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+└─number	| Document number.	| string(11)
+shippingAddress |	Shipping address. |	Object Address
+fundingInstruments	| Funding instruments. |	structured list
+├─method	| Method used. Possible values: CREDIT_CARD. | 	string
+└─creditCard |	Credit card. |	object CreditCard
+createdAt	| Date when the resource were created.	| datetime, response
+_links |	Resource links.	| structured, response
+├─self	| Hyperlink to the resource itself.	| structured
+└─└─href	| URI. |	link
+
+## Create a customer
+
+### Endpoint
+
+**POST:** `https://sandbox.moip.com.br/v2/customers`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "ownId": "qwertyu",
+  "fullname": "Ken Masters",
+  "email": "ken.masters0@email.com",
+  "birthDate": "1988-12-30",
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "shippingAddress": {
+    "city": "Sao Paulo",
+    "complement": "8",
+    "district": "Itaim",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "zipCode": "01234000",
+    "state": "SP",
+    "country": "BRA"
+  }
+}
+```
+**RESPONSE**
+```
+201 (Created)
+Content-Type: application/json
+SELECIONAR E COPIAR
+{
+  "id": "CUS-Y6L4AGQN8HKQ",
+  "ownId": "meu_id_sandbox_1231234",
+  "fullname": "Jose Silva",
+  "createdAt": "2015-01-14T11:28:22-0200",
+  "birthDate": "1988-12-30",
+  "email": "jose_silva0@email.com",
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+    }
+  }
+}
+```
+
+Parameters:
+
+name | decription | details
+---- | ---------- | -------
+ownId	| Customer's ownId . External reference.	| string(65), **mandatory**
+fullname |	Customer's fullname.	| string(90), **mandatory**
+email	| Customer's email.	| string(45), **mandatory**
+phone	| Customer's phone.	| structured, **optional**
+├─countryCode | 	Country code. Possible value: 55. |	integer(2), **optional**
+├─areaCode	| Areacode. |	integer(2), **optional**
+└─number	| Phone number. |	integer(9), **optional**
+birthDate	| Customer's birth date.	| date (AAAA-MM-DD), **optional**
+taxDocument |	Personal documentation.	| structured, **optional**
+├─type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string, **optional**
+└─number	| Document number.	| string(11), **optional**
+shippingAddress |	Shipping address. |	Object Address, **optional**
+fundingInstruments	| Funding instruments. |	structured list, **optional**
+├─method	| Method used. Possible values: CREDIT_CARD. | 	string, **optional**
+└─creditCard |	Credit card. |	object CreditCard, **optional**
+
+
+## Retrieve a customer
+
+
 
