@@ -96,12 +96,12 @@ The URI must be built with the attributes using delimiters inside the parameter 
 
 name | type | description
 ---- | ---- | -----------
-gt(x)	| number or date	| “Greater Than”
-ge(x)	| number or date	| “Greater than or Equal”
-lt(x)	| number or date	| “Less Than”
-le(x)	| number or date	| “Less than or Equal”
-bt(x,y)	| string	| - “BeTween”
-in(x,y…z)	| string	| - “IN”
+gt(x) | number or date  | “Greater Than”
+ge(x) | number or date  | “Greater than or Equal”
+lt(x) | number or date  | “Less Than”
+le(x) | number or date  | “Less than or Equal”
+bt(x,y) | string  | - “BeTween”
+in(x,y…z) | string  | - “IN”
 
 ### Environments
 
@@ -123,21 +123,21 @@ Attributes:
 
 name | decription | details
 ---- | ---------- | -------
-id | 	Moip customer's ID.	| string(16), response
-ownId	| Customer's ownId . External reference.	| string(65)
-fullname |	Customer's fullname.	| string(90)
-email	| Customer's email.	| string(45)
-phone.countryCode | 	Country code. Possible value: 55. |	integer(2)
-phone.areaCode	| Areacode. |	integer(2)
-phone.number	| Phone number. |	integer(9)
-birthDate	| Customer's birth date.	| date (AAAA-MM-DD)
-taxDocument.type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
-taxDocument.number	| Document number.	| string(11)
-shippingAddress |	Shipping address. |	Object Address
-fundingInstruments.method	| Method used. Possible values: CREDIT_CARD. | 	string
-fundingInstruments.creditCard |	Credit card. |	object CreditCard
-createdAt	| Date when the resource were created.	| datetime, response
-_links.self.href	| URI to the resource. |	link
+id |  Moip customer's ID. | string(16), response
+ownId | Customer's ownId . External reference.  | string(65)
+fullname |  Customer's fullname.  | string(90)
+email | Customer's email. | string(45)
+phone.countryCode |   Country code. Possible value: `55`. | integer(2)
+phone.areaCode  | Areacode. | integer(2)
+phone.number  | Phone number. | integer(9)
+birthDate | Customer's birth date.  | date `YYYY-MM-DD`
+taxDocument.type  | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. | string
+taxDocument.number  | Document number.  | string(11)
+shippingAddress | Shipping address. | Object Address
+fundingInstruments.method | Method used. Possible values: `CREDIT_CARD`. |  string
+fundingInstruments.creditCard | Credit card. |  object CreditCard
+createdAt | Date when the resource were created.  | datetime, response
+_links.self.href  | URI to the resource. |  link
 
 ## Create a customer - POST
 
@@ -324,51 +324,51 @@ Order is the representation of the product or service being sold. This API allow
 
 Attributes:
 
-name	| description	| details
+name  | description | details
 ---- |------------ | -------
-id | 	Order ID.	| string(16), response
-ownId	| Own id of an order. External reference.	| string(65)
-status	| Orders status. Possible values: CREATED, WAITING, PAID, NOT_PAID, REVERTED.	| string, response
-createdAt |	Date when the order was created.	| datetime, response
-amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
-amount.fees	| Moip fees.	| integer(12), response
-amount.refunds |	Total amount refunded.| 	integer(12), response
-amount.liquid	| Liquid amount.	| integer(12), response
-amount.otherReceivers |	Sum of total amount sent to other receivers. Used by marketplaces. |	integer(12), response
-amount.currency	| Currency. Possible values: BRL. |	string
-amount.subtotals.shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
-amount.subtotals.addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-amount.subtotals.discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-amount.subtotals.items	| Sum of the amount from all items.	| integer(12), response
-items.product |	Name of the product.	| string(256)
-items.quantity	| Quantity of products.	| integer(12)
-items.detail	| Description.	| string(256)
-items.price	| Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032 	| integer(12)
-checkoutPreferences.redirectUrls.urlSuccess	| Redirec URL for success payments.	| link
-checkoutPreferences.redirectUrls.urlError	| Redirec URL for failed payments.	| link
-checkoutPreferences.installments.quantity	| Delimiters for installments. Exemple: [1, 3];	| tupla
-checkoutPreferences.installments.discount	| Discount for installments number.	| integer
-checkoutPreferences.installments.addition	| Adition for installments number.	| integer
-shippingAddress	| Shipping address.	| structured Object: Address, response
-customer	| Customer related to the order.	| Cliente
-payments	| Payments attached to the order. For more information take a lookt at the resource payments.	| Payments collection, response
-refunds	| Refunds attached to the order. For more information take a lookt at the resource payments.	| Refunds collection, response
-entries	| Payments related to the order. For more information take a lookt at the resource payments.	| Entries colletion, response
-events.createdAt |	Event date.	| date(AAAA-MM-DD), response
-events.type	| Event type. Possible values: ORDER.CREATED, ORDER.WAITING, ORDER.PAID, ORDER.NOT_PAID, ORDER.REVERTED.	| string, response
-events.description |	Event description.	| string(65), response
-receivers.type	| Receiver type. Possible values: PRIMARY, SECONDARY	| string
-receivers.moipAccount.login	| Login.	| string(256)
-receivers.moipAccount.fullname |	Name of the account holder.	| string(256)
-receivers.moipAccount.id	| Account ID.	| string(16)
+id |  Order ID. | string(16), response
+ownId | Own id of an order. External reference. | string(65)
+status  | Orders status. Possible values: `CREATED`, `WAITING`, `PAID`, `NOT_PAID`, `REVERTED`. | string, response
+createdAt | Date when the order was created.  | datetime, response
+amount.total  | Total amount charged in cents. Ex: R$10,32 must be informed as 1032   | integer(12), response
+amount.fees | Moip fees.  | integer(12), response
+amount.refunds |  Total amount refunded.|   integer(12), response
+amount.liquid | Liquid amount.  | integer(12), response
+amount.otherReceivers | Sum of total amount sent to other receivers. Used by marketplaces. |  integer(12), response
+amount.currency | Currency. Possible values: `BRL`. | string
+amount.subtotals.shipping | Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.addition | Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.discount | Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.items  | Sum of the amount from all items. | integer(12), response
+items.product | Name of the product.  | string(256)
+items.quantity  | Quantity of products. | integer(12)
+items.detail  | Description.  | string(256)
+items.price | Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032   | integer(12)
+checkoutPreferences.redirectUrls.urlSuccess | Redirec URL for success payments. | link
+checkoutPreferences.redirectUrls.urlError | Redirec URL for failed payments.  | link
+checkoutPreferences.installments.quantity | Delimiters for installments. Exemple: [1, 3]; | tupla
+checkoutPreferences.installments.discount | Discount for installments number. | integer
+checkoutPreferences.installments.addition | Adition for installments number.  | integer
+shippingAddress | Shipping address. | structured Object: Address, response
+customer  | Customer related to the order.  | Cliente
+payments  | Payments attached to the order. For more information take a lookt at the resource payments. | Payments collection, response
+refunds | Refunds attached to the order. For more information take a lookt at the resource payments.  | Refunds collection, response
+entries | Payments related to the order. For more information take a lookt at the resource payments.  | Entries colletion, response
+events.createdAt |  Event date. | date`YYYY-MM-DD`, response
+events.type | Event type. Possible values: `ORDER.CREATED`, `ORDER.WAITING`, `ORDER.PAID`, `ORDER.NOT_PAID`, `ORDER.REVERTED`.  | string, response
+events.description |  Event description.  | string(65), response
+receivers.type  | Receiver type. Possible values: `PRIMARY`, `SECONDARY`  | string
+receivers.moipAccount.login | Login.  | string(256)
+receivers.moipAccount.fullname |  Name of the account holder. | string(256)
+receivers.moipAccount.id  | Account ID. | string(16)
 receivers.amount.percentual | Percentual of the total amount that goes to the receiver. | interger
 receivers.amount.fixed | Value of the total amount that goes to the receiver. | interger
-receivers.amount.refunds |	Total amount refunded from this receiver.	| integer(12)
-receivers.amount.fees	| Total fees charged from this receiver.	| integer(12)
-receivers.amount.total	| Total received. Ex: R$10,32 must be informed as 1032 	| integer(12)
-updatedAt	| Date when the resource was last updated.	| datetime, response
-_links.self.href	| URI to the resource. |	link
-_links.checkout	| Links to Moip checkout.	| object Checkout Moip
+receivers.amount.refunds |  Total amount refunded from this receiver. | integer(12)
+receivers.amount.fees | Total fees charged from this receiver.  | integer(12)
+receivers.amount.total  | Total received. Ex: R$10,32 must be informed as 1032  | integer(12)
+updatedAt | Date when the resource was last updated.  | datetime, response
+_links.self.href  | URI to the resource. |  link
+_links.checkout | Links to Moip checkout. | object Checkout Moip
 
 ## Create an order - POST
 
@@ -920,54 +920,54 @@ Attributes:
 name | description | type
 ---- | ----------- | ----
 id | Payment ID | string(16), response
-status | Status of a payment. Possible values: CREATED,WAITING, IN_ANALYSIS, PRE_AUTHORIZED,AUTHORIZED, CANCELLED, REFUNDED, REVERSED, SETTLED. | string, response
-amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
-amount.fees	| Moip fees.	| integer(12), response
-amount.refunds |	Total amount refunded.| 	integer(12), response
-amount.liquid	| Liquid amount.	| integer(12), response
-amount.currency	| Currency. Possible values: BRL. |	string
-amount.subtotals.shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
-amount.subtotals.addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-amount.subtotals.discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
-delayCapture	| Used if you need to pre-capture a payment. Only available for credit cards. |	boolean
-fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
+status | Status of a payment. Possible values: `CREATED`,`WAITING`, `IN_ANALYSIS`, `PRE_AUTHORIZED`,`AUTHORIZED`, `CANCELLED`, `REFUNDED`, `REVERSED`, `SETTLED`. | string, response
+amount.total  | Total amount charged in cents. Ex: R$10,32 must be informed as 1032   | integer(12), response
+amount.fees | Moip fees.  | integer(12), response
+amount.refunds |  Total amount refunded.|   integer(12), response
+amount.liquid | Liquid amount.  | integer(12), response
+amount.currency | Currency. Possible values: `BRL`. | string
+amount.subtotals.shipping | Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.addition | Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.discount | Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+installmentCount  | Number of installments. Minimum 1 and maximum 12. | integer(2)
+delayCapture  | Used if you need to pre-capture a payment. Only available for credit cards. | boolean
+fundingInstruments.method | Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` |  string
 fundingInstruments.creditCard.id | Credit card ID. This ID can be used in the future to create new payments. Internal reference. | string, conditional 
-fundingInstruments.creditCard.hash | Encripted credit card data | string, condicional
+fundingInstruments.creditCard.hash | Encripted credit card data | string, conditional
 fundingInstruments.creditCard.number | Credit Card number. Requires PCI certification. | string(19), conditional
 fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
 fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
-fundingInstruments.creditCard.cvc | Credit card security code. | integer, opcional
-fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), mandatory*
-fundingInstruments.creditCard.holder.birthdate | Holder birth date. | 	date(AAAA-MM-DD), mandatory*
+fundingInstruments.creditCard.cvc | Credit card security code. | integer, optional
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), required*
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, required*
 fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
 fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
-fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. | string
 fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
-fundingInstruments.boleto.expirationDate | Payment slip expiration date | 	date, mandatory
+fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, required
 fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
 fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
 fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
 fundingInstruments.boleto.logoUri | Logo that will be inserted on payment slip | link, optional
-fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, condicional
-fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, condicional
-fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, condicional
-fees.type	| Fee type. Possible values: TRANSACTION, PRE_PAYMENT.	| string
-fees.amount	| Amount charged. In cents Ex: R$10,32 must be informed as 1032 	| integer(12)
-events.createdAt |	Event date.	| date(AAAA-MM-DD), response
-events.type	| Event type. Possible values: `PAYMENT.WAIING`, `PAYMENT.AUTHORIZED`, `PAYMENT.IN_ANALYSIS`, `PRE_AUTHORIZED`, `PAYMENT.REFUNDED`, `PAYMENT.REVERSED`	| string, response
-events.description |	Event description.	| string(65), response
+fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, conditional
+fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, conditional
+fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, conditional
+fees.type | Fee type. Possible values: `TRANSACTION`, `PRE_PAYMENT`.  | string
+fees.amount | Amount charged. In cents Ex: R$10,32 must be informed as 1032   | integer(12)
+events.createdAt |  Event date. | date`YYYY-MM-DD`, response
+events.type | Event type. Possible values: `PAYMENT.WAIING`, `PAYMENT.AUTHORIZED`, `PAYMENT.IN_ANALYSIS`, `PRE_AUTHORIZED`, `PAYMENT.REFUNDED`, `PAYMENT.REVERSED`  | string, response
+events.description |  Event description.  | string(65), response
 cancellationDetails.cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
 cancellationDetails.code | Denial code | number, response 
 cancellationDetails.description | A brief description of the denial code. | string, response
-updatedAt	| Date when the resource was last updated.	| datetime, response
-createdAt |	Date when the payment was created.	| datetime, response
-_links.self.href	| URI to the resource. |	link
-_links.order.title	| Order ID. |	string
-_links.order.href	| Hyperlink to the order.	| link
-_links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
+updatedAt | Date when the resource was last updated.  | datetime, response
+createdAt | Date when the payment was created.  | datetime, response
+_links.self.href  | URI to the resource. |  link
+_links.order.title  | Order ID. | string
+_links.order.href | Hyperlink to the order. | link
+_links.checkout | Links to checkout. This link will redirect to the fundingInstrument informed. object Checkout Moip
 
-**When using credit card id to create payments, these attribute are not mandatory.**
+**When using credit card id to create payments, these attribute are not required.**
 
 
 
@@ -1331,8 +1331,8 @@ Attributes:
 
 name | description | type
 ---- | ----------- | ----
-amount	| Amount to be refunded. Ex: R$10,32 must be informed as 1032 | structured, optional
-refundingInstrument.method	| Method to refund a payment. Possible values: BANK_ACCOUNT e MOIP_ACCOUNT. |	string, condicional
+amount  | Amount to be refunded. Ex: R$10,32 must be informed as 1032 | structured, optional
+refundingInstrument.method  | Method to refund a payment. Possible values: `BANK_ACCOUNT` e `MOIP_ACCOUNT`. | string, conditional
 refundingInstrument.bankAccount.type | Bank account type. `CHECKING` or `SAVING` | string, conditional
 refundingInstrument.bankAccount.bankNumber | Bank number. | string, conditional
 refundingInstrument.bankAccount.agencyNumber | Agency number | integer, conditional
@@ -1725,18 +1725,18 @@ When you charge a multiorder, Moip creates one payment for each order involved.
 
 Attributes:
 
-name	| description |	type
+name  | description | type
 ---- | --------- | ----- 
-id	| Multiorder ID. |	string(16), response
-ownId	| Multiorder ownId . External reference. |	string(65)
-status	| Multiordr status. Possible values: `WAITING`, `PAID`, `NOT_PAID`, `REVERTED`. |	string(65), response
-amount.currency |	Currency. Possible values: BRL. |	string
-amount.total |		Total amount charged in cents. Ex: R$10,32 must be informed as 1032. |	integer(12)
-orders |	Order colletion. |	Order colletion
-createdAt	| Date when the resource was created.	| datetime, response
-updatedAt	| Date when the resource was last updated. |	datetime, response
-_links.self.href	| 	URI to the resource. |	link
-_links.checkout	Links to checkout. This link will redirect to the fundingInstrument informed. | object Checkout Moip
+id  | Multiorder ID. |  string(16), response
+ownId | Multiorder ownId . External reference. |  string(65)
+status  | Multiordr status. Possible values: `WAITING`, `PAID`, `NOT_PAID`, `REVERTED`. | string(65), response
+amount.currency | Currency. Possible values: `BRL`. | string
+amount.total |    Total amount charged in cents. Ex: R$10,32 must be informed as 1032. |  integer(12)
+orders |  Order colletion. |  Order colletion
+createdAt | Date when the resource was created. | datetime, response
+updatedAt | Date when the resource was last updated. |  datetime, response
+_links.self.href  |   URI to the resource. |  link
+_links.checkout Links to checkout. This link will redirect to the fundingInstrument informed. | object Checkout Moip
 
 ## Create a multiorder - POST
 
@@ -2379,39 +2379,39 @@ name | description | type
 ---- | ----------- | ----
 id | Multipayment ID | string(16), response
 status | Status of a multipayment. Possible values: `WAITING`, `IN_ANALYSIS`, `PRE_AUTHORIZED`,`AUTHORIZED`, `CANCELLED`, `REFUNDED`, `REVERSED`, `SETTLED`. | string, response
-amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
-amount.currency	| Currency. Possible values: BRL. |	string
-installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
-delayCapture	| Used if you need to pre-capture a multipayment. Only available for credit cards. |	boolean
-fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
+amount.total  | Total amount charged in cents. Ex: R$10,32 must be informed as 1032   | integer(12), response
+amount.currency | Currency. Possible values: `BRL`. | string
+installmentCount  | Number of installments. Minimum 1 and maximum 12. | integer(2)
+delayCapture  | Used if you need to pre-capture a multipayment. Only available for credit cards. |  boolean
+fundingInstruments.method | Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` |  string
 fundingInstruments.creditCard.id | Credit card ID. This ID can be used in the future to create new multipayments. Internal reference. | string, conditional 
-fundingInstruments.creditCard.hash | Encripted credit card data | string, condicional
+fundingInstruments.creditCard.hash | Encripted credit card data | string, conditional
 fundingInstruments.creditCard.number | Credit Card number. Requires PCI certification. | string(19), conditional
 fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
 fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
-fundingInstruments.creditCard.cvc | Credit card security code. | integer, opcional
-fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), mandatory*
-fundingInstruments.creditCard.holder.birthdate | Holder birth date. | 	date(AAAA-MM-DD), mandatory*
+fundingInstruments.creditCard.cvc | Credit card security code. | integer, optional
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), required*
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. |   date`YYYY-MM-DD`, required*
 fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
 fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
-fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. | string
 fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
-fundingInstruments.boleto.expirationDate | Payment slip expiration date | 	date, mandatory
+fundingInstruments.boleto.expirationDate | Payment slip expiration date |   date, required
 fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
 fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
 fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
 fundingInstruments.boleto.logoUri | Logo that will be inserted on payment slip | link, optional
-fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, condicional
-fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, condicional
-fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, condicional
+fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, conditional
+fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, conditional
+fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, conditional
 cancellationDetails.cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
 cancellationDetails.code | Denial code | number, response 
 cancellationDetails.description | A brief description of the denial code. | string, response
-updatedAt	| Date when the resource was last updated.	| datetime, response
-_links.self.href	| URI to the resource. |	link
-_links.order.title	| Order ID. |	string
-_links.order.href	| Hyperlink to the order.	| link
-_links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
+updatedAt | Date when the resource was last updated.  | datetime, response
+_links.self.href  | URI to the resource. |  link
+_links.order.title  | Order ID. | string
+_links.order.href | Hyperlink to the order. | link
+_links.checkout | Links to checkout. This link will redirect to the fundingInstrument informed. object Checkout Moip
 
 
 ## Create a multipayment - POST
@@ -3096,10 +3096,10 @@ To act on behalf of other sellers you need to create a Moip APP.
 
 name | description | details
 ---- | ----------- | -------
-responseType	| Defines the type os response. Possible values: `CODE` |	string(4), mandatory
-appId |	APP ID.	| string(16) mandatory
-redirectUri	| Redirect URI	| string(255), mandatory
-scope	| Scope of permissions you required. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`	| string(255), mandatory
+responseType  | Defines the type os response. Possible values: `CODE` | string(4), required
+appId | APP ID. | string(16) required
+redirectUri | Redirect URI  | string(255), required
+scope | Scope of permissions you required. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`  | string(255), required
 
 ### Endpoint
 
@@ -3123,15 +3123,15 @@ Attributes:
 
 name | description | details
 ---- | ----------- | -------
-appId | 	APP ID |	string(4), mandatory
-appSecret |	Chave privada do aplicativo	string(32) mandatory
-redirectUri | Redirect URL. Must be the same you used to require permission. |	string mandatory
-grantType | Type of request. Possible values: AUTHORIZATION_CODE	| string(18) mandatory
-code	| Code generated when the user gave permission to the APP |	string(32) mandatory
-accessToken |	User accessToken.	| string(32) response
-access_token |	User accessToken. | genéricos	string(32) response
-scope | Scope of permissions granted. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT` |	string response
-moipAccountId | Account ID of the account that gave permission.	string(16) response
+appId |   APP ID |  string(4), required
+appSecret | Chave privada do aplicativo string(32) required
+redirectUri | Redirect URL. Must be the same you used to require permission. |  string required
+grantType | Type of request. Possible values: `AUTHORIZATION_CODE`  | string(18) required
+code  | Code generated when the user gave permission to the APP | string(32) required
+accessToken | User accessToken. | string(32) response
+access_token |  User accessToken. | genéricos string(32) response
+scope | Scope of permissions granted. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT` | string response
+moipAccountId | Account ID of the account that gave permission. string(16) response
 
 ### Endpoint
 
@@ -3172,59 +3172,60 @@ With this endopint it is possible to create Moip Accounts.
 Attributes:
 
 name | description | details 
-email.address	Endereço de email da conta. Será usado como login. Para Contas Transparentes o email é utilizado apenas para localizar uma conta no Moip uma vez que nenhuma comunicação é enviada ao dono da conta.	string, obrigatório
-person.name	Nome.	string, obrigatório
-person.lastName	Sobrenome.	string, obrigatório
-person.taxDocument.type	Tipo do documento. Valores possíveis: CPF.	string, obrigatório
-person.taxDocument.number	Número do documento.	string, obrigatório
-person.identityDocument.type	Tipo do documento. Valores possíveis: RG.	string
-person.identityDocument.number	Número do documento.	string
-person.identityDocument.issuer	Emissor do documento.	string
-person.identityDocument.issueDate	Data de emissão do documento. Formato 2011-01-01.	date
-person.birthDate	Data de nascimento.	date (AAAA-MM-DD)
-person.nationality	País de nascimento. Abreviação com 3 letras	string
-person.birthPlace	Cidade de nascimento.	string
-person.parents.mother	Nome da mãe.	string
-person.parents.father	Nome do pai.	string
-person.phone.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string, obrigatório
-person.phone.areaCode	DDD (código local) do telefone.	string, obrigatório
-person.phone.number	Número do telefone.	string, obrigatório
-person.alternativePhones.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string
-person.alternativePhones.areaCode	DDD (código local) do telefone.	string
-person.alternativePhones.number	Número do telefone.	string
-person.address.street	Nome da rua.	string, obrigatório
-person.address.streetNumber	Número.	string, obrigatório
-person.address.complement	Complemento.	string
-person.address.district	Bairro.	string, obrigatório
-person.address.zipCode	CEP.	string, obrigatório
-person.address.city	Cidade.	string, obrigatório
-person.address.state	Estado. Abreviação com 2 letras	string, obrigatório
-person.address.country	País. Abreviação com 2 letras	string, obrigatório
-company.name	Nome fantasia.	string, condicional
-company.businessName	Razão social.	string, condicional
-company.taxDocument.type	Tipo do documento. Valores possíveis: CNPJ.	string, condicional
-company.taxDocument.number	Número do documento.	string, condicional
-company.mainActivity.cnae	Código CNAE de atividade. Exemplo 82.91-1/00	string
-company.mainActivity.description	Descrição da atividade. Exemplo Atividades de cobranças e informações cadastrais	string
-company.openingDate	Data de abertura. Formato 2011-01-01.	date
-company.phone.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string, condicional
-company.phone.areaCode	DDD (código local) do telefone.	string, condicional
-company.phone.number	Número do telefone.	string, condicional
-company.address.street	Nome da rua.	string, condicional
-company.address.streetNumber	Número.	string, condicional
-company.address.complement	Complemento.	string
-company.address.district	Bairro.	string, condicional
-company.address.zipCode	CEP.	string, condicional
-company.address.city	Cidade.	string, condicional
-company.address.state	Estado. Abreviação com 2 letras	string, condicional
-company.address.country	País. Abreviação com 2 letras	string, condicional
-businessSegment.id	Identificador da categoria, de acordo com a relação de categorias. Ver a Tabela de categorias para ver os valores possíveis.	string
-site	Endereço do site.	string
-type	Tipo da conta. Valores possíveis: CONSUMER, MERCHANT. Plataformas e Marketplaces devem utilizar o valor MERCHANTpara criar contas para os seus usuários.	string, obrigatório
-transparentAccount	Utilizada para criar Contas transparentes dentro do contexto de plataformas e marketplaces. Contas transparentes são gerenciadas pelas plataformas e o Moip não envia nenhuma comunicação para o usuário. Ver mais detalhes na documentação de negócios (incluir o link).	boolean
-tosAcceptance.acceptedAt	Data de aceite dos termos de uso	datetime
-tosAcceptance.ip	Endereço de IP do usuário ao aceitar os termos de uso.	string
-tosAcceptance.userAgent	Agente utilizado pelo usuário no momento do aceite dos termos de uso.	string
+---- | ----------- | -------
+email.address | Email address that will be used as Login. For transparent accounts the email is used only as a reference since there's no communitation between Moip and these accounts. |  string, required
+person.name | Name. | string, required
+person.lastName | Last name.  | string, required
+person.taxDocument.type | Type of document. Possible value: `CPF` for social security number. | string, required
+person.taxDocument.number | Document number. |  string, required
+person.identityDocument.type  | Identity document type. Possible values: `RG`. |  string
+person.identityDocument.number  | Number of document. | string
+person.identityDocument.issuer  | Issuer of the document. | string
+person.identityDocument.issueDate | Date when the document was issued. | `YYYY-MM-DD`,  date
+person.birthDate  | Birth date. | `YYYY-MM-DD`, date
+person.nationality  | Country code according to [ISO-3](http://unstats.un.org/unsd/tradekb/Knowledgebase/Country-Code)| string 
+person.birthPlace | Birth place. | string
+person.parents.mother | Mother's name. | string
+person.parents.father | Father's name. | string
+person.phone.countryCode  | Country code. Possible values: `55`. | string, required
+person.phone.areaCode | Area code. | string, required
+person.phone.number | Phone number. | string, required
+person.alternativePhones.countryCode  | Country code. Possible values: `55`. | string
+person.alternativePhones.areaCode | Area code. string
+person.alternativePhones.number | Phone number. string
+person.address.street | Street name. | string, required
+person.address.streetNumber | Number. | string, required
+person.address.complement | Complement. | string
+person.address.district | District. | string, required
+person.address.zipCode  | Zip code. |  string, required
+person.address.city | Cidade. string, required
+person.address.state  | State. | string(2), required
+person.address.country  | Country. | string(2), required
+company.name  | Trading name. | string, conditional
+company.businessName  | Company name. | string, conditional
+company.taxDocument.type  | Company document type. Possible values: `CNPJ`. | string, conditional
+company.taxDocument.number  | Tax identification number.  string, conditional
+company.mainActivity.cnae | CNAE business code. Example: 82.91-1/00 | string
+company.mainActivity.description  | Business description. Exemple: `Atividades de cobranças e informações cadastrais` | string
+company.openingDate | Company opening date. | `YYYY-MM-DD`, date
+company.phone.countryCode | Country code. Possible values: `55`. | string, conditional
+company.phone.areaCode  | Area code. | string, conditional
+company.phone.number  | Phone number. | string, conditional
+company.address.street  | Street name. | string, conditional
+company.address.streetNumber  | Number | string, conditional
+company.address.complement  | Complemente. | string
+company.address.district  | District. | string, conditional
+company.address.zipCode | Zip code. | string, conditional
+company.address.city  | City. | string, conditional
+company.address.state | State |. string(2), conditional
+company.address.country | Country code according to [ISO-3](http://unstats.un.org/unsd/tradekb/Knowledgebase/Country-Code)| string 
+businessSegment.id  | [Industry ID](http://dev.moip.com.br/referencia-api/#tabela-de-categorias-de-estabelecimento). | string
+site  | Website. | string
+type  | Account type Possible values: `CONSUMER`, `MERCHANT`. Ecommerce platforms and marketplace must use `MERCHANT` for their users. | string, required
+transparentAccount  | Used to create transparent account for marketplaces and ecommerce platforms. Theses account are managed by the creator agent and Moip doesn't communicate with them in any way. | boolean
+tosAcceptance.acceptedAt  | Date when the user accepted the contract. | datetime
+tosAcceptance.ip  | IP (internet protocol) | string
+tosAcceptance.userAgent | Agent through whom the user accepted the contract. | string
 
 
 
