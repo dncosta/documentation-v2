@@ -9,3 +9,72 @@ but it centainlly observes the main aspects of the APIs.
 We strongly recommend you to take a look at the Getting Started topics [here](dev.moip.com.br/docs), 
 if you have any questions or need any help just send an email to [dev@moip.com.br](dev@moip.com.br) 
 and we'll gladly take some time and make you start playing the game. ;)
+
+## RESTful
+
+V2 APIs are base on RESTful architecture design. Our API resouces are named after the objects they represent (like orders, payments, customers, refunds, etc.) and we support many HTTP verbs for each resource.
+This way, one recource (for example: "v2/customers/") can be used to create a customer through the POST method as well as listing customers through GET method.
+The APIs were designed with the hypermedia concept (HATEOAS) so you can use our links structure between resources to automate you application and simplify your integration.
+
+## Error states
+
+Every API request will return a HTTP status and a JSON showing the objects you have intected with.
+
+Attributes
+
+name | description  | details
+------------ | ------------- | ------------- 
+code | ERROR ID | string
+path | Attribute related to the error | string
+description | A brief description (in portuguese) | string
+
+All mapped errors will return a http status 4xx to your application. If you get a 5xx error, please send us an email giving details of your request and we'll fix it asap.
+
+ * 400 errors - Must be treated from your application. The APIs will return a JSON with details of the problem.
+ * 401 errors - Indicates an authentication problem. Make sure you are using the right keys to authenticate and if you are pointing to the right environment.
+ * 500 errors - These are internal errors, that shouldn't happen but if it does please send an email to [dev@moip.com.br](dev@moip.com.br)
+ 
+Example:
+
+```
+{
+  "errors": [
+    {
+      "code": "ORD-001",
+      "path": "ownId",
+      "description": "É necessario informar seu identificador próprio"
+    }
+  ]
+}
+```
+
+## Response pattern
+
+For `POST` and `GET` methods you will receive a full representation of the resource requested, except by null or empty attributes which will be ommited.
+In case of nested resources (like payments inside orders) when consulting the main resource you'll also receive a minimal view of the nested one. The minimal view is small version of a resource, containing only the most relevant attributes.
+
+## Listing and Searching
+
+You can also search for some objects like payments and orders, to do so you have 3 parameters to refine your request.
+
+* Pagination - Determines how many objects will be returned.
+* Generic search - Search a string that you have used to create a resource (IDs, Emails, Name, etc)
+* Filters - Specifies and segments the search.
+
+### Pagination
+
+name | type  | description
+------------ | ------------- | ------------- 
+limit | integer | Number of objects returned (by page). Default value is 20.
+offset | integer | The resource where the search started. Default value is 0.
+
+Example:
+
+`GET: v2/recurso?limit=100&offset=300`
+
+### Generic search
+
+### Filters
+
+
+
