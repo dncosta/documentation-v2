@@ -126,22 +126,17 @@ id | 	Moip customer's ID.	| string(16), response
 ownId	| Customer's ownId . External reference.	| string(65)
 fullname |	Customer's fullname.	| string(90)
 email	| Customer's email.	| string(45)
-phone	| Customer's phone.	| structured
-├─countryCode | 	Country code. Possible value: 55. |	integer(2)
-├─areaCode	| Areacode. |	integer(2)
-└─number	| Phone number. |	integer(9)
+phone.countryCode | 	Country code. Possible value: 55. |	integer(2)
+phone.areaCode	| Areacode. |	integer(2)
+phone.number	| Phone number. |	integer(9)
 birthDate	| Customer's birth date.	| date (AAAA-MM-DD)
-taxDocument |	Personal documentation.	| structured
-├─type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
-└─number	| Document number.	| string(11)
+taxDocument.type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+taxDocument.number	| Document number.	| string(11)
 shippingAddress |	Shipping address. |	Object Address
- fundingInstruments	| Funding instruments. |	structured list
- ├─method	| Method used. Possible values: CREDIT_CARD. | 	string
- └─creditCard |	Credit card. |	object CreditCard
+fundingInstruments.method	| Method used. Possible values: CREDIT_CARD. | 	string
+fundingInstruments.creditCard |	Credit card. |	object CreditCard
 createdAt	| Date when the resource were created.	| datetime, response
-_links |	Resource links.	| structured, response
-├─self	| Hyperlink to the resource itself.	| structured
-└─└─href	| URI. |	link
+_links.self.href	| URI to the resource. |	link
 
 ## Create a customer - POST
 
@@ -219,27 +214,6 @@ Content-Type: application/json
 }
 ```
 
-**Parameters:**
-
-name | decription | details
----- | ---------- | -------
-ownId	| Customer's ownId . External reference.	| string(65), **mandatory**
-fullname |	Customer's fullname.	| string(90), **mandatory**
-email	| Customer's email.	| string(45), **mandatory**
-phone	| Customer's phone.	| structured, **optional**
-├─countryCode | 	Country code. Possible value: 55. |	integer(2), **optional**
-├─areaCode	| Areacode. |	integer(2), **optional**
-└─number	| Phone number. |	integer(9), **optional**
-birthDate	| Customer's birth date.	| date (AAAA-MM-DD), **optional**
-taxDocument |	Personal documentation.	| structured, **optional**
-├─type	| Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string, **optional**
-└─number	| Document number.	| string(11), **optional**
-shippingAddress |	Shipping address. |	Object Address, **optional**
-fundingInstruments	| Funding instruments. |	structured list, **optional**
-├─method	| Method used. Possible values: CREDIT_CARD. | 	string, **optional**
-└─creditCard |	Credit card. |	object CreditCard, **optional**
-
-
 ## Retrieve a customer - GET
 
 ### Endpoint
@@ -290,12 +264,6 @@ Content-Type: application/json
   }
 }
 ```
-
-**Parameters:**
-
-name | 	description | details 
----- | ------------ | --------
-id	| hash of customer id.	| string(16), **mandatory**
 
 ## Adding a credit card - POST
 
@@ -349,18 +317,6 @@ Content-Type: application/json
 }
 ```
 
-**Parameters:**
-
-name | 	description | details 
----- | ------------ | --------
-id	| hash of customer id.	| string(16), **mandatory**
-├─method	| Method used. Possible values: CREDIT_CARD. | 	string, **optional**
-└─creditCard |	Credit card. |	object CreditCard, **optional**
-phone	| Customer's phone.	| structured, **optional**
-├─countryCode | 	Country code. Possible value: 55. |	integer(2), **optional**
-├─areaCode	| Areacode. |	integer(2), **optional**
-└─number	| Phone number. |	integer(9), **optional**
-
 # ORDERS
 
 Order is the representation of the product or service being sold. This API allows you to create and retrieve a customer.
@@ -373,55 +329,45 @@ id | 	Order ID.	| string(16), response
 ownId	| Own id of an order. External reference.	| string(65)
 status	| Orders status. Possible values: CREATED, WAITING, PAID, NOT_PAID, REVERTED.	| string, response
 createdAt |	Date when the order was created.	| datetime, response
-amount	| Order amount.	| structured
-├─total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
-├─fees	| Moip fees.	| integer(12), response
-├─refunds |	Total amount refunded.| 	integer(12), response
-├─liquid	| Liquid amount.	| integer(12), response
-├─otherReceivers |	Sum of total amount sent to other receivers. Used by marketplaces. |	integer(12), response
-├─currency	| Currency. Possible values: BRL. |	string
-├─subtotals	| Aditional values.	| structured
-├ ├─shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
-├ ├─addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-├ ├─discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
-└ └─items	| Sum of the amount from all items.	| integer(12), response
-items	| Items structure.	| structured list
-├─product |	Name of the product.	| string(256)
-├─quantity	| Quantity of products.	| integer(12)
-├─detail	| Description.	| string(256)
-└─price	| Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032 	| integer(12)
-checkoutPreferences |	Checkout setup.	| structured
-├─redirectUrls	| Redirect URLs.	| string(256)
-├ ├─urlSuccess	| Redirec URL for success payments.	| link
-└ └─urlError	| Redirec URL for failed payments.	| link
-├─installments	| Installments setup.	| structured list
-├ ├─quantity	| Delimiters for installments. Exemple: [1, 3];	| tupla
-├ ├─discount	| Discount for installments number.	| integer
-└ └─addition	| Adition for installments number.	| integer
+amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
+amount.fees	| Moip fees.	| integer(12), response
+amount.refunds |	Total amount refunded.| 	integer(12), response
+amount.liquid	| Liquid amount.	| integer(12), response
+amount.otherReceivers |	Sum of total amount sent to other receivers. Used by marketplaces. |	integer(12), response
+amount.currency	| Currency. Possible values: BRL. |	string
+amount.subtotals.shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.items	| Sum of the amount from all items.	| integer(12), response
+items.product |	Name of the product.	| string(256)
+items.quantity	| Quantity of products.	| integer(12)
+items.detail	| Description.	| string(256)
+items.price	| Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032 	| integer(12)
+checkoutPreferences.redirectUrls.urlSuccess	| Redirec URL for success payments.	| link
+checkoutPreferences.redirectUrls.urlError	| Redirec URL for failed payments.	| link
+checkoutPreferences.installments.quantity	| Delimiters for installments. Exemple: [1, 3];	| tupla
+checkoutPreferences.installments.discount	| Discount for installments number.	| integer
+checkoutPreferences.installments.addition	| Adition for installments number.	| integer
 shippingAddress	| Shipping address.	| structured Object: Address, response
 customer	| Customer related to the order.	| Cliente
 payments	| Payments attached to the order. For more information take a lookt at the resource payments.	| Payments collection, response
 refunds	| Refunds attached to the order. For more information take a lookt at the resource payments.	| Refunds collection, response
 entries	| Payments related to the order. For more information take a lookt at the resource payments.	| Entries colletion, response
-events	| Events related to the order.	| structured list, response
-├─createdAt |	Event date.	| date(AAAA-MM-DD), response
-├─type	| Event type. Possible values: ORDER.CREATED, ORDER.WAITING, ORDER.PAID, ORDER.NOT_PAID, ORDER.REVERTED.	| string, response
-└─description |	Event description.	| string(65), response
-receivers	| Receivers structure.	| structured list
-├─type	| Receiver type. Possible values: PRIMARY, SECONDARY	| string
-├─moipAccount |	Structure of Moip Account that will receive a payment.	| structured
-├ ├─login	| Login.	| string(256)
-├ ├─fullname |	Name of the account holder.	| string(256)
-├ └─id	| Account ID.	| string(16)
-├─amount	| Structed of values that will be received.	| structured
-├ ├─refunds |	Total amount refunded from this receiver.	| integer(12)
-├ ├─fees	| Total fees charged from this receiver.	| integer(12)
-└ └─total	| Total received. Ex: R$10,32 must be informed as 1032 	| integer(12)
+events.createdAt |	Event date.	| date(AAAA-MM-DD), response
+events.type	| Event type. Possible values: ORDER.CREATED, ORDER.WAITING, ORDER.PAID, ORDER.NOT_PAID, ORDER.REVERTED.	| string, response
+events.description |	Event description.	| string(65), response
+receivers.type	| Receiver type. Possible values: PRIMARY, SECONDARY	| string
+receivers.moipAccount.login	| Login.	| string(256)
+receivers.moipAccount.fullname |	Name of the account holder.	| string(256)
+receivers.moipAccount.id	| Account ID.	| string(16)
+receivers.amount.percentual | Percentual of the total amount that goes to the receiver. | interger
+receivers.amount.fixed | Value of the total amount that goes to the receiver. | interger
+receivers.amount.refunds |	Total amount refunded from this receiver.	| integer(12)
+receivers.amount.fees	| Total fees charged from this receiver.	| integer(12)
+receivers.amount.total	| Total received. Ex: R$10,32 must be informed as 1032 	| integer(12)
 updatedAt	| Date when the resource was last updated.	| datetime, response
-_links |	Resource links.	| structured, response
-├─self	| Hyperlink to the resource itself.	| structured
-└─└─href	| URI. |	link
-└─checkout	| Links to Moip checkout.	| object Checkout Moip
+_links.self.href	| URI to the resource. |	link
+_links.checkout	| Links to Moip checkout.	| object Checkout Moip
 
 ## Create an order - POST
 
