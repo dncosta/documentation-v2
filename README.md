@@ -119,7 +119,7 @@ Once you finish to integrate with the sandbox you need to change your API keys a
 
 The customer is the user of a service or a person buying a product. This API allows you to create a retrieve a customer objetc.
 
-Customer attributes:
+Attributes:
 
 name | decription | details
 ---- | ---------- | -------
@@ -266,7 +266,7 @@ Content-Type: application/json
 }
 ```
 
-## Adding a credit card - POST
+## Add a credit card - POST
 
 ### Endpoint
 
@@ -374,7 +374,7 @@ _links.checkout	| Links to Moip checkout.	| object Checkout Moip
 
 ### Endpoint
 
-**GET** `https://sandbox.moip.com.br/v2/orders`
+**POST** `https://sandbox.moip.com.br/v2/orders`
 
 **REQUEST:**
 ```
@@ -708,7 +708,7 @@ Content-Type: application/json
 }
 ```
 
-## Retrieve orders list
+## Retrieve a list of orders - GET
 
 ### Endpoint
 
@@ -915,7 +915,7 @@ Content-Type: application/json
 
 A payment represents the financial transaction that happens between a customer and a seller through a credit card, payment slip or any other method. This API allows you to create and retrieve payments.
 
-Attributes
+Attributes:
 
 name | description | type
 ---- | ----------- | ----
@@ -969,7 +969,7 @@ _links.checkout	| Links to checkout. This link will redirect to the fundingInstr
 
 
 
-## Create a payment
+## Create a payment - POST
 
 ### Endpoint
 
@@ -1067,7 +1067,7 @@ Content-Type: application/json
 }
 ```
 
-## Retrieve a payment
+## Retrieve a payment - GET
 
 ### Endpoint
 
@@ -1143,7 +1143,7 @@ Content-Type: application/json
 ```
 
 
-## Capture a pre-authorized payment
+## Capture a pre-authorized payment - POST
 
 This API allows you to capture a payment that is pre-authorized (if you are using the `delayCapture` attribute as `true`).
 If you are using pre_authorized payments on multipayments API, you must use the accessToken from your seller to capture a payment.
@@ -1231,13 +1231,13 @@ Content-Type: application/json
 }
 ```
 
-## Cancelling a pre-authorized payment
+## Cancel a pre-authorized payment - POST
 
 This API allows you to cancel the capture of a pre_authorized payment.
 
 ### Endpoint
 
-**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
+**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
 
 **REQUEST:**
 ```
@@ -1341,7 +1341,7 @@ refundingInstrument.bankAccount.holder.fullname | Bank account holder name | str
 refundingInstrument.bankAccount.holder.taxDocument.type | Bank account holder document type | string, conditional 
 refundingInstrument.bankAccount.holder.taxDocument.number | Bank account holder document number | string, conditional 
 
-## Refund a payment
+## Refund a payment - POST
 
 ### Endpoint
 
@@ -1404,7 +1404,7 @@ Content-Type: application/json
 }
 ```
 
-## Refund a payment partially
+## Refund a payment (partial) - POST
 
 ### Endpoint
 
@@ -1469,7 +1469,7 @@ Content-Type: application/json
 }
 ```
 
-## Refund an order
+## Refund an order - POST
 
 ### Endpoint
 
@@ -1532,7 +1532,7 @@ Content-Type: application/json
 }
 ```
 
-## Retrieve a refund
+## Retrieve a refund - GET
 
 ### Endpoint
 
@@ -1583,7 +1583,7 @@ Content-Type: application/json
 }
 ```
 
-## List refunds from a payment
+## List refunds from a payment - GET
 
 ### Endpoint
 
@@ -1648,11 +1648,11 @@ Content-Type: application/json
 }
 ```
 
-## List refunds from an order
+## List refunds from an order - GET
 
 ### Endpoint
 
-**POST** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
+**GET** `https://sandbox.moip.com.br/v2/payments/{payment_id}/void`
 
 **REQUEST:**
 ```
@@ -1736,7 +1736,7 @@ updatedAt	| Date when the resource was last updated. |	datetime, response
 _links.self.href	| 	URI to the resource. |	link
 _links.checkout	Links to checkout. This link will redirect to the fundingInstrument informed. | object Checkout Moip
 
-## Create a multiorder
+## Create a multiorder - POST
 
 ### Endpoint
 
@@ -2110,7 +2110,7 @@ Content-Type: application/json
 }
 ```
 
-## Retrieve a multiorder
+## Retrieve a multiorder - GET
 
 ### Endpoint
 
@@ -2412,7 +2412,7 @@ _links.order.href	| Hyperlink to the order.	| link
 _links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
 
 
-## Creating a multipayment
+## Create a multipayment - POST
 
 ### Endpoint
 
@@ -2585,7 +2585,7 @@ Content-Type: application/json
 }
 ```
 
-## Creating a multipayment (with payment slip)
+## Create a multipayment (with payment slip) - POST
 
 ### Endpoint
 
@@ -2755,7 +2755,7 @@ Content-Type: application/json
 }
 ```
 
-## Creating a multipayment (online bank debit)
+## Create a multipayment (online bank debit) - POST
 
 ### Endpoint
 
@@ -2903,11 +2903,11 @@ Content-Type: application/json
 }
 ```
 
-## Retrieve a multipayment
+## Retrieve a multipayment - GET
 
 ### Endpoint
 
-**POST** `https://sandbox.moip.com.br/v2/multipayments/{multipayment_id}`
+**GET** `https://sandbox.moip.com.br/v2/multipayments/{multipayment_id}`
 
 **REQUEST:**
 ```
@@ -3097,7 +3097,7 @@ name | description | details
 responseType	| Defines the type os response. Possible values: `CODE` |	string(4), mandatory
 appId |	APP ID.	| string(16) mandatory
 redirectUri	| Redirect URI	| string(255), mandatory
-scope	| Scope of permissions you required. POssible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`	| string(255), mandatory
+scope	| Scope of permissions you required. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT`	| string(255), mandatory
 
 ### Endpoint
 
@@ -3109,12 +3109,58 @@ The page created with the URL above will look like this:
 
 ![Moip Page](https://moip.com.br/docs/images/content/moip-connect-pagina-permissao.png)
 
+If the user accepts to give your APP permission, then he will be redirected to your redirect URL, containing his `code`.
+
+**Example:** `http://mywebsite.com/?code=ohgrvfk2kdq92w27w66mlntasfh24je&scope=create_orders+view_orders+create_payments+view_payments`
+
+## Generate OAuth token (accessToken) - POST
+
+With the `code` you retrieved from the step above you will be able to get the user `acessToken` and then use it to make requests on his behelf.
+
+Attributes:
+
+name | description | details
+---- | ----------- | -------
+appId | 	APP ID |	string(4), mandatory
+appSecret |	Chave privada do aplicativo	string(32) mandatory
+redirectUri | Redirect URL. Must be the same you used to require permission. |	string mandatory
+grantType | Type of request. Possible values: AUTHORIZATION_CODE	| string(18) mandatory
+code	| Code generated when the user gave permission to the APP |	string(32) mandatory
+accessToken |	User accessToken.	| string(32) response
+access_token |	User accessToken. | genéricos	string(32) response
+scope | Scope of permissions granted. Possible values: `CREATE_ORDERS`,`VIEW_ORDERS`,`CREATE_PAYMENTS`,`VIEW_PAYMENT` |	string response
+moipAccountId | Account ID of the account that gave permission.	string(16) response
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/oauth/accesstoken`
+
 **REQUEST:**
 ```
+https://sandbox.moip.com.br/oauth/accesstoken
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "appId": "APP-A1B2C3D4E5F6",
+  "appSecret": "aa6494500f7711e38ffd0800200c9a66",
+  "redirectUri": "https://url.com.br/callback",
+  "grantType": "AUTHORIZATION_CODE",
+  "code": "550e8400e29b41d4a716446655440000"
+}
 ``` 
 
 **RESPONSE:** 
 ```
+201 (Created)
+Content-Type: application/json
+
+{
+  "accessToken": "aa6494500f7711e38ffd0800200c9a77",
+  "access_token": "aa6494500f7711e38ffd0800200c9a77",
+  "scope": "CREATE_ORDERS|VIEW_ORDERS|CREATE_PAYMENTS|VIEW_PAYMENTS",
+  "moipAccountId": "MPA-A1B2C3D4E5F6"
+}
 ```
 
 
