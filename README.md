@@ -143,7 +143,7 @@ _links |	Resource links.	| structured, response
 ├─self	| Hyperlink to the resource itself.	| structured
 └─└─href	| URI. |	link
 
-## Create a customer
+## Create a customer - POST
 
 ### Endpoint
 
@@ -184,7 +184,7 @@ Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQk
 ```
 201 (Created)
 Content-Type: application/json
-SELECIONAR E COPIAR
+
 {
   "id": "CUS-Y6L4AGQN8HKQ",
   "ownId": "meu_id_sandbox_1231234",
@@ -240,7 +240,58 @@ fundingInstruments	| Funding instruments. |	structured list, **optional**
 └─creditCard |	Credit card. |	object CreditCard, **optional**
 
 
-## Retrieve a customer
+## Retrieve a customer - GET
 
+### Endpoint
 
+**GET** `https://sandbox.moip.com.br/v2/customers/{customer_id}`
 
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "CUS-Y6L4AGQN8HKQ",
+  "ownId": "meu_id_sandbox_1231234",
+  "fullname": "Jose Silva",
+  "createdAt": "2015-01-14T11:28:22-0200",
+  "birthDate": "1988-12-30T00:00:00-0200",
+  "email": "jose_silva0@email.com",
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+    }
+  }
+}
+```
+
+**Parameters**
+
+name | 	description | details 
+id	| hash of customer id.	| string(16), **mandatory**
