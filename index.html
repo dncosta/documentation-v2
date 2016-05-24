@@ -1,0 +1,4638 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Documentation-v2 : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Documentation-v2</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dncosta/documentation-v2">View on GitHub</a>
+
+          <h1 id="project_title">Documentation-v2</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/dncosta/documentation-v2/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/dncosta/documentation-v2/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="moip-v2--api-reference---english" class="anchor" href="#moip-v2--api-reference---english" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Moip V2 | API Reference - english</h1>
+
+<h3>
+<a id="about-this-documentation" class="anchor" href="#about-this-documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>About this documentation</h3>
+
+<p>This is an english version of Moip V2 API reference. 
+This documentation is based on the portuguese version and may not contain all details covered in the original version, 
+but it centainlly observes the main aspects of the APIs. </p>
+
+<p>We strongly recommend you to take a look at the Getting Started topics <a href="dev.moip.com.br/docs">here</a>, 
+if you have any questions or need any help just send an email to <a href="dev@moip.com.br">dev@moip.com.br</a> 
+and we'll gladly take some time and make you start playing the game. ;)</p>
+
+<h3>
+<a id="restful" class="anchor" href="#restful" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RESTful</h3>
+
+<p>V2 APIs are base on RESTful architecture design. Our API resouces are named after the objects they represent (like orders, payments, customers, refunds, etc.) and we support many HTTP verbs for each resource.
+This way, one recource (for example: "v2/customers/") can be used to create a customer through the POST method as well as listing customers through GET method.
+The APIs were designed with the hypermedia concept (HATEOAS) so you can use our links structure between resources to automate you application and simplify your integration.</p>
+
+<h3>
+<a id="error-states" class="anchor" href="#error-states" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Error states</h3>
+
+<p>Every API request will return a HTTP status and a JSON showing the objects you have intected with.</p>
+
+<p>Attributes</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>code</td>
+<td>ERROR ID</td>
+<td>string</td>
+</tr>
+<tr>
+<td>path</td>
+<td>Attribute related to the error</td>
+<td>string</td>
+</tr>
+<tr>
+<td>description</td>
+<td>A brief description (in portuguese)</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<p>All mapped errors will return a http status 4xx to your application. If you get a 5xx error, please send us an email giving details of your request and we'll fix it asap.</p>
+
+<ul>
+<li>400 errors - Must be treated from your application. The APIs will return a JSON with details of the problem.</li>
+<li>401 errors - Indicates an authentication problem. Make sure you are using the right keys to authenticate and if you are pointing to the right environment.</li>
+<li>500 errors - These are internal errors, that shouldn't happen but if it does please send an email to <a href="dev@moip.com.br">dev@moip.com.br</a>
+</li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code>{
+  "errors": [
+    {
+      "code": "ORD-001",
+      "path": "ownId",
+      "description": "É necessario informar seu identificador próprio"
+    }
+  ]
+}
+</code></pre>
+
+<h3>
+<a id="response-pattern" class="anchor" href="#response-pattern" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response pattern</h3>
+
+<p>For <code>POST</code> and <code>GET</code> methods you will receive a full representation of the resource requested, except by null or empty attributes which will be ommited.
+In case of nested resources (like payments inside orders) when consulting the main resource you'll also receive a minimal view of the nested one. The minimal view is small version of a resource, containing only the most relevant attributes.</p>
+
+<h3>
+<a id="listing-and-searching" class="anchor" href="#listing-and-searching" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Listing and Searching</h3>
+
+<p>You can also search for some objects like payments and orders, to do so you have 3 parameters to refine your request.</p>
+
+<ul>
+<li>Pagination - Determines how many objects will be returned.</li>
+<li>Generic search - Search a string that you have used to create a resource (IDs, Emails, Name, etc)</li>
+<li>Filters - Specifies and segments the search.</li>
+</ul>
+
+<h4>
+<a id="pagination" class="anchor" href="#pagination" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pagination</h4>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>limit</td>
+<td>integer</td>
+<td>Number of objects returned (by page). Default value is 20.</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>integer</td>
+<td>The resource where the search started. Default value is 0.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Example:</p>
+
+<p><code>GET: v2/recurso?limit=100&amp;offset=300</code></p>
+
+<h4>
+<a id="generic-search" class="anchor" href="#generic-search" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Generic search</h4>
+
+<p>This is the easiest method to search for a resource inside the APIs.</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>q</td>
+<td>Search for a specific string.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Example: </p>
+
+<p><code>GET: v2/recurso?q=meu_id_proprio</code></p>
+
+<h4>
+<a id="filters" class="anchor" href="#filters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Filters</h4>
+
+<p>Filters can be used to refine your search, for example you can request orders on a specific status or between dates.
+Not all resources have attributes available for filtering. Take a look at the resource you want to filter to know what attributes you can use as a parameter.</p>
+
+<p>Delimiters:</p>
+
+<p>The URI must be built with the attributes using delimiters inside the parameter <code>filters</code>.</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gt(x)</td>
+<td>number or date</td>
+<td>“Greater Than”</td>
+</tr>
+<tr>
+<td>ge(x)</td>
+<td>number or date</td>
+<td>“Greater than or Equal”</td>
+</tr>
+<tr>
+<td>lt(x)</td>
+<td>number or date</td>
+<td>“Less Than”</td>
+</tr>
+<tr>
+<td>le(x)</td>
+<td>number or date</td>
+<td>“Less than or Equal”</td>
+</tr>
+<tr>
+<td>bt(x,y)</td>
+<td>string</td>
+<td>- “BeTween”</td>
+</tr>
+<tr>
+<td>in(x,y…z)</td>
+<td>string</td>
+<td>- “IN”</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="environments" class="anchor" href="#environments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Environments</h3>
+
+<p>All examples available in this documentation are refering to the <code>sandbox</code> environment where real transacions are not possible.
+However, the application of Moip's <code>sandbox</code> environment behaves exactly like the <code>production</code> environment.</p>
+
+<p>Once you finish to integrate with the sandbox you need to change your API keys and URI to point to the production environment.</p>
+
+<p><code>Production: https://api.moip.com.br</code>
+<code>Sandbox: https://sandbox.moip.com.br</code></p>
+
+<h1>
+<a id="customers" class="anchor" href="#customers" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CUSTOMERS</h1>
+
+<p>The customer is the user of a service or a person buying a product. This API allows you to create a retrieve a customer objetc.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>decription</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Moip customer's ID.</td>
+<td>string(16), response</td>
+</tr>
+<tr>
+<td>ownId</td>
+<td>Customer's ownId . External reference.</td>
+<td>string(65)</td>
+</tr>
+<tr>
+<td>fullname</td>
+<td>Customer's fullname.</td>
+<td>string(90)</td>
+</tr>
+<tr>
+<td>email</td>
+<td>Customer's email.</td>
+<td>string(45)</td>
+</tr>
+<tr>
+<td>phone.countryCode</td>
+<td>Country code. Possible value: <code>55</code>.</td>
+<td>integer(2)</td>
+</tr>
+<tr>
+<td>phone.areaCode</td>
+<td>Areacode.</td>
+<td>integer(2)</td>
+</tr>
+<tr>
+<td>phone.number</td>
+<td>Phone number.</td>
+<td>integer(9)</td>
+</tr>
+<tr>
+<td>birthDate</td>
+<td>Customer's birth date.</td>
+<td>date <code>YYYY-MM-DD</code>
+</td>
+</tr>
+<tr>
+<td>taxDocument.type</td>
+<td>Type of document. Possible value: <code>CPF</code> for social security number, <code>CNPJ</code> for tax identification number.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>taxDocument.number</td>
+<td>Document number.</td>
+<td>string(11)</td>
+</tr>
+<tr>
+<td>shippingAddress</td>
+<td>Shipping address.</td>
+<td>Object Address</td>
+</tr>
+<tr>
+<td>fundingInstruments.method</td>
+<td>Method used. Possible values: <code>CREDIT_CARD</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard</td>
+<td>Credit card.</td>
+<td>object CreditCard</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>Date when the resource were created.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>_links.self.href</td>
+<td>URI to the resource.</td>
+<td>link</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="create-a-customer---post" class="anchor" href="#create-a-customer---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a customer - POST</h2>
+
+<h3>
+<a id="endpoint" class="anchor" href="#endpoint" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST:</strong> <code>https://sandbox.moip.com.br/v2/customers</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "ownId": "qwertyu",
+  "fullname": "Ken Masters",
+  "email": "ken.masters0@email.com",
+  "birthDate": "1988-12-30",
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "shippingAddress": {
+    "city": "Sao Paulo",
+    "complement": "8",
+    "district": "Itaim",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "zipCode": "01234000",
+    "state": "SP",
+    "country": "BRA"
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE</strong></p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "CUS-Y6L4AGQN8HKQ",
+  "ownId": "meu_id_sandbox_1231234",
+  "fullname": "Jose Silva",
+  "createdAt": "2015-01-14T11:28:22-0200",
+  "birthDate": "1988-12-30",
+  "email": "jose_silva0@email.com",
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-customer---get" class="anchor" href="#retrieve-a-customer---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a customer - GET</h2>
+
+<h3>
+<a id="endpoint-1" class="anchor" href="#endpoint-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/customers/{customer_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "CUS-Y6L4AGQN8HKQ",
+  "ownId": "meu_id_sandbox_1231234",
+  "fullname": "Jose Silva",
+  "createdAt": "2015-01-14T11:28:22-0200",
+  "birthDate": "1988-12-30T00:00:00-0200",
+  "email": "jose_silva0@email.com",
+  "phone": {
+    "countryCode": "55",
+    "areaCode": "11",
+    "number": "66778899"
+  },
+  "taxDocument": {
+    "type": "CPF",
+    "number": "22222222222"
+  },
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="add-a-credit-card---post" class="anchor" href="#add-a-credit-card---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Add a credit card - POST</h2>
+
+<h3>
+<a id="endpoint-2" class="anchor" href="#endpoint-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/customers/{customer_id}/fundinginstruments</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "method": "CREDIT_CARD",
+  "creditCard": {
+    "expirationMonth": "05",
+    "expirationYear": "18",
+    "number": "5555666677778884",
+    "cvc": "123",
+    "holder": {
+      "fullname": "Jose Portador da Silva",
+      "birthdate": "1988-12-30",
+      "taxDocument": {
+        "type": "CPF",
+        "number": "33333333333"
+      },
+      "phone": {
+        "countryCode": "55",
+        "areaCode": "11",
+        "number": "66778899"
+      }
+    }
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong></p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "method": "CREDIT_CARD",
+  "creditCard": {
+    "id": "CRC-NLBLOTNB6LLT",
+    "brand": "MASTERCARD",
+    "first6": "555566",
+    "last4": "8884"
+  }
+}
+</code></pre>
+
+<h1>
+<a id="orders" class="anchor" href="#orders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ORDERS</h1>
+
+<p>Order is the representation of the product or service being sold. This API allows you to create and retrieve a customer.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Order ID.</td>
+<td>string(16), response</td>
+</tr>
+<tr>
+<td>ownId</td>
+<td>Own id of an order. External reference.</td>
+<td>string(65)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Orders status. Possible values: <code>CREATED</code>, <code>WAITING</code>, <code>PAID</code>, <code>NOT_PAID</code>, <code>REVERTED</code>.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>Date when the order was created.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>amount.total</td>
+<td>Total amount charged in cents. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.fees</td>
+<td>Moip fees.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.refunds</td>
+<td>Total amount refunded.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.liquid</td>
+<td>Liquid amount.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.otherReceivers</td>
+<td>Sum of total amount sent to other receivers. Used by marketplaces.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.currency</td>
+<td>Currency. Possible values: <code>BRL</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>amount.subtotals.shipping</td>
+<td>Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>amount.subtotals.addition</td>
+<td>Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>amount.subtotals.discount</td>
+<td>Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>amount.subtotals.items</td>
+<td>Sum of the amount from all items.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>items.product</td>
+<td>Name of the product.</td>
+<td>string(256)</td>
+</tr>
+<tr>
+<td>items.quantity</td>
+<td>Quantity of products.</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>items.detail</td>
+<td>Description.</td>
+<td>string(256)</td>
+</tr>
+<tr>
+<td>items.price</td>
+<td>Inicial amount. (The value is multiplied according to the number of products.) Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>checkoutPreferences.redirectUrls.urlSuccess</td>
+<td>Redirec URL for success payments.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>checkoutPreferences.redirectUrls.urlError</td>
+<td>Redirec URL for failed payments.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>checkoutPreferences.installments.quantity</td>
+<td>Delimiters for installments. Exemple: [1, 3];</td>
+<td>tupla</td>
+</tr>
+<tr>
+<td>checkoutPreferences.installments.discount</td>
+<td>Discount for installments number.</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>checkoutPreferences.installments.addition</td>
+<td>Adition for installments number.</td>
+<td>integer</td>
+</tr>
+<tr>
+<td>shippingAddress</td>
+<td>Shipping address.</td>
+<td>structured Object: Address, response</td>
+</tr>
+<tr>
+<td>customer</td>
+<td>Customer related to the order.</td>
+<td>Cliente</td>
+</tr>
+<tr>
+<td>payments</td>
+<td>Payments attached to the order. For more information take a lookt at the resource payments.</td>
+<td>Payments collection, response</td>
+</tr>
+<tr>
+<td>refunds</td>
+<td>Refunds attached to the order. For more information take a lookt at the resource payments.</td>
+<td>Refunds collection, response</td>
+</tr>
+<tr>
+<td>entries</td>
+<td>Payments related to the order. For more information take a lookt at the resource payments.</td>
+<td>Entries colletion, response</td>
+</tr>
+<tr>
+<td>events.createdAt</td>
+<td>Event date.</td>
+<td>date<code>YYYY-MM-DD</code>, response</td>
+</tr>
+<tr>
+<td>events.type</td>
+<td>Event type. Possible values: <code>ORDER.CREATED</code>, <code>ORDER.WAITING</code>, <code>ORDER.PAID</code>, <code>ORDER.NOT_PAID</code>, <code>ORDER.REVERTED</code>.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>events.description</td>
+<td>Event description.</td>
+<td>string(65), response</td>
+</tr>
+<tr>
+<td>receivers.type</td>
+<td>Receiver type. Possible values: <code>PRIMARY</code>, <code>SECONDARY</code>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>receivers.moipAccount.login</td>
+<td>Login.</td>
+<td>string(256)</td>
+</tr>
+<tr>
+<td>receivers.moipAccount.fullname</td>
+<td>Name of the account holder.</td>
+<td>string(256)</td>
+</tr>
+<tr>
+<td>receivers.moipAccount.id</td>
+<td>Account ID.</td>
+<td>string(16)</td>
+</tr>
+<tr>
+<td>receivers.amount.percentual</td>
+<td>Percentual of the total amount that goes to the receiver.</td>
+<td>interger</td>
+</tr>
+<tr>
+<td>receivers.amount.fixed</td>
+<td>Value of the total amount that goes to the receiver.</td>
+<td>interger</td>
+</tr>
+<tr>
+<td>receivers.amount.refunds</td>
+<td>Total amount refunded from this receiver.</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>receivers.amount.fees</td>
+<td>Total fees charged from this receiver.</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>receivers.amount.total</td>
+<td>Total received. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>Date when the resource was last updated.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>_links.self.href</td>
+<td>URI to the resource.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.checkout</td>
+<td>Links to Moip checkout.</td>
+<td>object Checkout Moip</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="create-an-order---post" class="anchor" href="#create-an-order---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create an order - POST</h2>
+
+<h3>
+<a id="endpoint-3" class="anchor" href="#endpoint-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/orders</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "ownId": "seu_identificador_proprio",
+  "amount": {
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000
+    }
+  },
+  "items": [
+    {
+      "product": "Descrição do pedido",
+      "quantity": 1,
+      "detail": "Mais info...",
+      "price": 1000
+    }
+  ],
+  "customer": {
+    "ownId": "seu_identificador_proprio_de_cliente",
+    "fullname": "Jose Silva",
+    "email": "nome@email.com",
+    "birthDate": "1988-12-30",
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "shippingAddress": {
+      "street": "Avenida Faria Lima",
+      "streetNumber": 2927,
+      "complement": 8,
+      "district": "Itaim",
+      "city": "Sao Paulo",
+      "state": "SP",
+      "country": "BRA",
+      "zipCode": "01234000"
+    }
+  }
+}
+
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "ORD-NY92W6N4S220",
+  "ownId": "seu_identificador_proprio",
+  "status": "CREATED",
+  "createdAt": "2015-01-14T11:25:10-0200",
+  "amount": {
+    "total": 2000,
+    "fees": 0,
+    "refunds": 0,
+    "liquid": 0,
+    "otherReceivers": 0,
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000,
+      "addition": 0,
+      "discount": 0,
+      "items": 1000
+    }
+  },
+  "items": [
+    {
+      "detail": "Mais info...",
+      "quantity": 1,
+      "price": 1000,
+      "product": "Descrição do pedido"
+    }
+  ],
+  "customer": {
+    "id": "CUS-73HWY5J45TLO",
+    "ownId": "seu_identificador_proprio_de_cliente",
+    "fullname": "Jose Silva",
+    "createdAt": "2015-01-14T11:25:10-0200",
+    "birthDate": "1988-12-30T00:00:00-0200",
+    "email": "nome@email.com",
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "shippingAddress": {
+      "zipCode": "01234000",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "complement": "8",
+      "city": "Sao Paulo",
+      "district": "Itaim",
+      "state": "SP",
+      "country": "BRA"
+    },
+    "_links": {
+      "self": {
+        "href": "https://sandbox.moip.com.br/v2/customers/CUS-73HWY5J45TLO"
+      }
+    }
+  },
+  "payments": [],
+  "refunds": [],
+  "entries": [],
+  "events": [
+    {
+      "createdAt": "2015-01-14T11:25:10-0200",
+      "description": "",
+      "type": "ORDER.CREATED"
+    }
+  ],
+  "receivers": [
+    {
+      "amount": {
+        "fees": 0,
+        "refunds": 0,
+        "total": 2000
+      },
+      "moipAccount": {
+        "fullname": "Moip SandBox",
+        "login": "integracao@labs.moip.com.br",
+        "id": "MPA-CULBBYHD11"
+      },
+      "type": "PRIMARY"
+    }
+  ],
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-NY92W6N4S220"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBB": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bancobrasil/ORD-NY92W6N4S220"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBradesco": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bradesco/ORD-NY92W6N4S220"
+      },
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBanrisul": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/banrisul/ORD-NY92W6N4S220"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-an-order---get" class="anchor" href="#retrieve-an-order---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve an order - GET</h2>
+
+<h3>
+<a id="endpoint-4" class="anchor" href="#endpoint-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/orders/{order_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+{
+  "id": "ORD-4HY0KOA9Q73F",
+  "ownId": "meu_pedido_sandbox_xxxxx",
+  "status": "CREATED",
+  "createdAt": "2015-01-14T11:39:15-0200",
+  "amount": {
+    "total": 2000,
+    "fees": 0,
+    "refunds": 0,
+    "liquid": 0,
+    "otherReceivers": 0,
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000,
+      "addition": 0,
+      "discount": 0,
+      "items": 1000
+    }
+  },
+  "items": [
+    {
+      "detail": "Mais info...",
+      "quantity": 1,
+      "price": 1000,
+      "product": "Produto de testes Sandbox - xxxx"
+    }
+  ],
+  "addresses": [
+    {
+      "city": "Sao Paulo",
+      "complement": "8",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "zipCode": "01234000",
+      "district": "Itaim",
+      "state": "SP",
+      "type": "SHIPPING",
+      "country": "BRA"
+    }
+  ],
+  "customer": {
+    "id": "CUS-Y6L4AGQN8HKQ",
+    "ownId": "meu_id_sandbox_1231234",
+    "fullname": "Jose Silva",
+    "createdAt": "2015-01-14T11:28:22-0200",
+    "birthDate": "1988-12-30T00:00:00-0200",
+    "email": "jose_silva0@email.com",
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "addresses": [
+      {
+        "city": "Sao Paulo",
+        "complement": "8",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "zipCode": "01234000",
+        "district": "Itaim",
+        "state": "SP",
+        "type": "SHIPPING",
+        "country": "BRA"
+      }
+    ],
+    "shippingAddress": {
+      "zipCode": "01234000",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "complement": "8",
+      "city": "Sao Paulo",
+      "district": "Itaim",
+      "state": "SP",
+      "country": "BRA"
+    },
+    "_links": {
+      "self": {
+        "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+      }
+    }
+  },
+  "payments": [],
+  "refunds": [],
+  "entries": [],
+  "events": [
+    {
+      "createdAt": "2015-01-14T11:39:15-0200",
+      "description": "",
+      "type": "ORDER.CREATED"
+    }
+  ],
+  "receivers": [
+    {
+      "amount": {
+        "fees": 0,
+        "refunds": 0,
+        "total": 2000
+      },
+      "moipAccount": {
+        "fullname": "Moip SandBox",
+        "login": "integracao@labs.moip.com.br",
+        "id": "MPA-CULBBYHD11"
+      },
+      "type": "PRIMARY"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-4HY0KOA9Q73F"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBB": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bancobrasil/ORD-4HY0KOA9Q73F"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBradesco": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bradesco/ORD-4HY0KOA9Q73F"
+      },
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBanrisul": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/banrisul/ORD-4HY0KOA9Q73F"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-list-of-orders---get" class="anchor" href="#retrieve-a-list-of-orders---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a list of orders - GET</h2>
+
+<h3>
+<a id="endpoint-5" class="anchor" href="#endpoint-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p>This endpoint allows you to list orders using filters.</p>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/orders</code></p>
+
+<p>Example with filters: <code>https://sandbox.moip.com.br/v2/orders?q=pagamento do pedido&amp;filters=status::in(PAID,WAITING)|paymentMethod::in(CREDIT_CARD,BOLETO)|amount::bt(5000,10000)&amp;limit=3&amp;offset=0</code></p>
+
+<p><em><strong>IMPORTANT:</strong> Make sure you are using URL encode to make requests with filters.</em></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+{
+  "_links": {
+    "next": {
+      "href": "https://sandbox.moip.com.br/v2/orders?q=jose silva&amp;filters=createdAt::bt(2014-11-08,2015-05-07)&amp;limit=3&amp;offset=3"
+    },
+    "previous": {
+      "href": "https://sandbox.moip.com.br/v2/orders?q=jose silva&amp;filters=createdAt::bt(2014-11-08,2015-05-07)&amp;limit=3&amp;offset=0"
+    }
+  },
+  "summary": {
+    "count": 497,
+    "amount": 1914750
+  },
+  "orders": [
+    {
+      "id": "380561",
+      "ownId": "sandbox_v2_1430950122",
+      "externalId": "ORD-U052MFZ4M414",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430950122@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T19:09:06Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-U052MFZ4M414"
+        }
+      },
+      "createdAt": "2015-05-06T19:08:43Z",
+      "updatedAt": "2015-05-06T19:08:48Z"
+    },
+    {
+      "id": "380560",
+      "ownId": "sandbox_v2_1430950121",
+      "externalId": "ORD-8MFXXQTTPEJ4",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430950121@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T19:09:06Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-8MFXXQTTPEJ4"
+        }
+      },
+      "createdAt": "2015-05-06T19:08:41Z",
+      "updatedAt": "2015-05-06T19:08:48Z"
+    },
+    {
+      "id": "380456",
+      "ownId": "sandbox_v2_1430942777",
+      "externalId": "ORD-3XCFS4BTBO38",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430942777@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T17:06:53Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3XCFS4BTBO38"
+        }
+      },
+      "createdAt": "2015-05-06T17:06:23Z",
+      "updatedAt": "2015-05-06T17:06:42Z"
+    }
+  ]
+}
+</code></pre>
+
+<h1>
+<a id="payments" class="anchor" href="#payments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>PAYMENTS</h1>
+
+<p>A payment represents the financial transaction that happens between a customer and a seller through a credit card, payment slip or any other method. This API allows you to create and retrieve payments.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Payment ID</td>
+<td>string(16), response</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Status of a payment. Possible values: <code>CREATED</code>,<code>WAITING</code>, <code>IN_ANALYSIS</code>, <code>PRE_AUTHORIZED</code>,<code>AUTHORIZED</code>, <code>CANCELLED</code>, <code>REFUNDED</code>, <code>REVERSED</code>, <code>SETTLED</code>.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>amount.total</td>
+<td>Total amount charged in cents. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.fees</td>
+<td>Moip fees.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.refunds</td>
+<td>Total amount refunded.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.liquid</td>
+<td>Liquid amount.</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.currency</td>
+<td>Currency. Possible values: <code>BRL</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>amount.subtotals.shipping</td>
+<td>Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>amount.subtotals.addition</td>
+<td>Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>amount.subtotals.discount</td>
+<td>Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>installmentCount</td>
+<td>Number of installments. Minimum 1 and maximum 12.</td>
+<td>integer(2)</td>
+</tr>
+<tr>
+<td>delayCapture</td>
+<td>Used if you need to pre-capture a payment. Only available for credit cards.</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>fundingInstruments.method</td>
+<td>Method used. Possible values: <code>CREDIT_CARD</code>, <code>BOLETO</code>, <code>ONLINE_BANK_DEBIT</code>, <code>WALLET</code>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.id</td>
+<td>Credit card ID. This ID can be used in the future to create new payments. Internal reference.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.hash</td>
+<td>Encripted credit card data</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.number</td>
+<td>Credit Card number. Requires PCI certification.</td>
+<td>string(19), conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.expirationMonth</td>
+<td>Credit card expiration month. Requires PCI certification.</td>
+<td>integer(2), mandadory when <code>number</code> is used.</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.expirationYear</td>
+<td>Credit card expiration year. Requires PCI certification.</td>
+<td>integer(4), mandadory when <code>number</code> is used.</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.cvc</td>
+<td>Credit card security code.</td>
+<td>integer, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.fullname</td>
+<td>Holder name.</td>
+<td>string(90), <strong>required</strong>*</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.birthdate</td>
+<td>Holder birth date.</td>
+<td>date<code>YYYY-MM-DD</code>, <strong>required</strong>*</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.phone.areaCode</td>
+<td>Area code</td>
+<td>integer(2), optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.phone.countryCode</td>
+<td>Country code</td>
+<td>integer(2), optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.taxDocument.type</td>
+<td>Type of document. Possible value: <code>CPF</code> for social security number, <code>CNPJ</code> for tax identification number.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.billingAddress</td>
+<td>Billing address.</td>
+<td>object Address optional *</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.expirationDate</td>
+<td>Payment slip expiration date</td>
+<td>date, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.first</td>
+<td>Payment slip instructions, line 1</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.second</td>
+<td>Payment slip instructions, line 2</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.third</td>
+<td>Payment slip instructions, line 3</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.logoUri</td>
+<td>Logo that will be inserted on payment slip</td>
+<td>link, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.bankNumber</td>
+<td>Bank number. Possible values: <code>001</code>, <code>237</code>, <code>341</code>, <code>041</code>. List available <a href="http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias">HERE</a>
+</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.expirationDate</td>
+<td>Debit expiration date.</td>
+<td>date, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.returnUri</td>
+<td>Return URI.</td>
+<td>link, conditional</td>
+</tr>
+<tr>
+<td>fees.type</td>
+<td>Fee type. Possible values: <code>TRANSACTION</code>, <code>PRE_PAYMENT</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fees.amount</td>
+<td>Amount charged. In cents Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>events.createdAt</td>
+<td>Event date.</td>
+<td>date<code>YYYY-MM-DD</code>, response</td>
+</tr>
+<tr>
+<td>events.type</td>
+<td>Event type. Possible values: <code>PAYMENT.WAIING</code>, <code>PAYMENT.AUTHORIZED</code>, <code>PAYMENT.IN_ANALYSIS</code>, <code>PRE_AUTHORIZED</code>, <code>PAYMENT.REFUNDED</code>, <code>PAYMENT.REVERSED</code>
+</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>events.description</td>
+<td>Event description.</td>
+<td>string(65), response</td>
+</tr>
+<tr>
+<td>cancellationDetails.cancelledBy</td>
+<td>The agent that denied the transaction</td>
+<td>Possible values: <code>MOIP</code> ou <code>ACQUIRER</code>.</td>
+</tr>
+<tr>
+<td>cancellationDetails.code</td>
+<td>Denial code</td>
+<td>number, response</td>
+</tr>
+<tr>
+<td>cancellationDetails.description</td>
+<td>A brief description of the denial code.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>Date when the resource was last updated.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>Date when the payment was created.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>_links.self.href</td>
+<td>URI to the resource.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.order.title</td>
+<td>Order ID.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>_links.order.href</td>
+<td>Hyperlink to the order.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.checkout</td>
+<td>Links to checkout. This link will redirect to the fundingInstrument informed. object Checkout Moip</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>When using credit card id to create payments, these attribute are not **required</strong>.**</p>
+
+<h2>
+<a id="create-a-payment---post" class="anchor" href="#create-a-payment---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a payment - POST</h2>
+
+<h3>
+<a id="endpoint-6" class="anchor" href="#endpoint-6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/orders/{order_id}/payments</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "method": "CREDIT_CARD",
+    "creditCard": {
+        "hash": "HhL0kbhfid+jwgj5l6Kt9EPdetDxQN8s7uKUHDYxDC/XoULjzik44rSda3EcWuOcL17Eb8JjWc1JI7gsuwg9P0rJv1mJQx+d3Dv1puQYz1iRjEWWhnB1bw0gTvnnC/05KbWN5M8oTiugmhVK02Rt2gpbcTtpS7VWyacfgesBJFavYYMljYg8p2YGHXkXrMuQiOCeemKLk420d0OTMBba27jDVVJ663HZDrObnjFXJH/4B5irkj+HO5genV+V4PYoLcOESG4nrI3oFAsMGsLLcdJo0NNvkEmJpn0e9GzureKKFYisYU+BEd9EMr/odS0VMvOYRV65HbPTspIkjl2+3Q==",
+      "holder": {
+        "fullname": "Jose Portador da Silva",
+        "birthdate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        }
+      }
+    }
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "PAY-VZ1HI48256ZX",
+  "status": "IN_ANALYSIS",
+  "amount": {
+    "fees": 187,
+    "refunds": 0,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-V0AAG27AAFG7",
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-01-14T12:17:50-0200",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-01-14T12:17:48-0200",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-VULX1EWDKXHF",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-VULX1EWDKXHF"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-VZ1HI48256ZX"
+    }
+  },
+  "updatedAt": "2015-01-14T12:17:50-0200",
+  "createdAt": "2015-01-14T12:17:48-0200"
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-payment---get" class="anchor" href="#retrieve-a-payment---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a payment - GET</h2>
+
+<h3>
+<a id="endpoint-7" class="anchor" href="#endpoint-7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "PAY-VZ1HI48256ZX",
+  "status": "IN_ANALYSIS",
+  "amount": {
+    "fees": 187,
+    "refunds": 0,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-V0AAG27AAFG7",
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-01-14T12:17:50-0200",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-01-14T12:17:48-0200",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-VULX1EWDKXHF",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-VULX1EWDKXHF"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-VZ1HI48256ZX"
+    }
+  },
+  "updatedAt": "2015-01-14T12:17:50-0200",
+  "createdAt": "2015-01-14T12:17:48-0200"
+}
+</code></pre>
+
+<h2>
+<a id="capture-a-pre-authorized-payment---post" class="anchor" href="#capture-a-pre-authorized-payment---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Capture a pre-authorized payment - POST</h2>
+
+<p>This API allows you to capture a payment that is pre-authorized (if you are using the <code>delayCapture</code> attribute as <code>true</code>).
+If you are using pre_authorized payments on multipayments API, you must use the accessToken from your seller to capture a payment.</p>
+
+<h3>
+<a id="endpoint-8" class="anchor" href="#endpoint-8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/capture</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+{
+  "id": "PAY-ZJOE0VPNGIM5",
+  "status": "AUTHORIZED",
+  "amount": {
+    "refunds": 0,
+    "fees": 187,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-8XPB5E78J3C5",
+      "brand": "VISA",
+      "first6": "401200",
+      "last4": "3335",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-03-30T09:51:58-0300",
+      "type": "PAYMENT.AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.PRE_AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:38-0300",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-Y3HRHLCNQ4VO",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-Y3HRHLCNQ4VO"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-ZJOE0VPNGIM5"
+    }
+  },
+  "createdAt": "2015-03-30T09:51:38-0300",
+  "updatedAt": "2015-03-30T09:51:58-0300"
+}
+</code></pre>
+
+<h2>
+<a id="cancel-a-pre-authorized-payment---post" class="anchor" href="#cancel-a-pre-authorized-payment---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Cancel a pre-authorized payment - POST</h2>
+
+<p>This API allows you to cancel the capture of a pre_authorized payment.</p>
+
+<h3>
+<a id="endpoint-9" class="anchor" href="#endpoint-9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/void</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+{
+  "id": "PAY-ZJOE0VPNGIM5",
+  "status": "CANCELLED",
+  "amount": {
+    "refunds": 0,
+    "fees": 187,
+    "liquid": 1813,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "creditCard": {
+      "id": "CRC-8XPB5E78J3C5",
+      "brand": "VISA",
+      "first6": "401200",
+      "last4": "3335",
+      "holder": {
+        "birthdate": "30/12/1988",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "fullname": "Jose Portador da Silva"
+      }
+    },
+    "method": "CREDIT_CARD"
+  },
+  "fees": [
+    {
+      "type": "TRANSACTION",
+      "amount": 187
+    }
+  ],
+  "events": [
+    {
+      "createdAt": "2015-03-30T09:51:58-0300",
+      "type": "PAYMENT.CANCELLED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.PRE_AUTHORIZED"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:41-0300",
+      "type": "PAYMENT.IN_ANALYSIS"
+    },
+    {
+      "createdAt": "2015-03-30T09:51:38-0300",
+      "type": "PAYMENT.CREATED"
+    }
+  ],
+  "_links": {
+    "order": {
+      "title": "ORD-Y3HRHLCNQ4VO",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-Y3HRHLCNQ4VO"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-ZJOE0VPNGIM5"
+    }
+  },
+  "createdAt": "2015-03-30T09:51:38-0300",
+  "updatedAt": "2015-03-30T09:51:58-0300"
+}
+</code></pre>
+
+<h1>
+<a id="refunds" class="anchor" href="#refunds" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>REFUNDS</h1>
+
+<p>This API allows you to refund a payment. This same process is also available on orders.</p>
+
+<p>It is possible to refund payments and order totally ir partially. In case the attribute <code>amount</code> is not specified than the API will consider as a total refund.
+A refund made on a credit card returns the value refunded in the credit card automatically. For payment slips and bank debit can be refunded through a bank account or a Moip account. </p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>amount</td>
+<td>Amount to be refunded. Ex: R$10,32 must be informed as 1032</td>
+<td>structured, optional</td>
+</tr>
+<tr>
+<td>refundingInstrument.method</td>
+<td>Method to refund a payment. Possible values: <code>BANK_ACCOUNT</code> e <code>MOIP_ACCOUNT</code>.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.type</td>
+<td>Bank account type. <code>CHECKING</code> or <code>SAVING</code>
+</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.bankNumber</td>
+<td>Bank number.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.agencyNumber</td>
+<td>Agency number</td>
+<td>integer, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.agencyCheckNumber</td>
+<td>Agency check number</td>
+<td>integer, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.accountNumber</td>
+<td>Bank account</td>
+<td>integer, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.accountCheckNumber</td>
+<td>Bank account check number</td>
+<td>integer, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.holder.fullname</td>
+<td>Bank account holder name</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.holder.taxDocument.type</td>
+<td>Bank account holder document type</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>refundingInstrument.bankAccount.holder.taxDocument.number</td>
+<td>Bank account holder document number</td>
+<td>string, conditional</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="refund-a-payment---post" class="anchor" href="#refund-a-payment---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Refund a payment - POST</h2>
+
+<h3>
+<a id="endpoint-10" class="anchor" href="#endpoint-10" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-BP8AAGSG7OTY",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-26T19:14:25-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-26T19:14:23-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "type": "FULL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-26T19:14:23-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-X2VXEGV7WVFB",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-X2VXEGV7WVFB"
+    },
+    "order": {
+      "title": "ORD-44GC0PFGU42M",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-44GC0PFGU42M"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BP8AAGSG7OTY"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="refund-a-payment-partial---post" class="anchor" href="#refund-a-payment-partial---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Refund a payment (partial) - POST</h2>
+
+<h3>
+<a id="endpoint-11" class="anchor" href="#endpoint-11" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+    "amount": 1000   
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-I7IEV1RG9T1L",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-27T11:28:11-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-27T11:28:10-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 1000
+  },
+  "type": "PARTIAL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-27T11:28:10-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-3N7TSKQ26L2I",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+    },
+    "order": {
+      "title": "ORD-1RQDM20CQW8T",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-I7IEV1RG9T1L"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="refund-an-order---post" class="anchor" href="#refund-an-order---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Refund an order - POST</h2>
+
+<h3>
+<a id="endpoint-12" class="anchor" href="#endpoint-12" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/orders/{order_id}/refunds</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "REF-BP8AAGSG7OTY",
+  "status": "COMPLETED",
+  "events": [
+    {
+      "createdAt": "2015-02-26T19:14:25-0300",
+      "type": "REFUND.COMPLETED"
+    },
+    {
+      "createdAt": "2015-02-26T19:14:23-0300",
+      "type": "REFUND.REQUESTED"
+    }
+  ],
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 2000
+  },
+  "type": "FULL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-02-26T19:14:23-0300",
+  "_links": {
+    "payment": {
+      "title": "PAY-X2VXEGV7WVFB",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-X2VXEGV7WVFB"
+    },
+    "order": {
+      "title": "ORD-44GC0PFGU42M",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-44GC0PFGU42M"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BP8AAGSG7OTY"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-refund---get" class="anchor" href="#retrieve-a-refund---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a refund - GET</h2>
+
+<h3>
+<a id="endpoint-13" class="anchor" href="#endpoint-13" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/refunds/{refund_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (OK)
+Content-Type: application/json
+
+ {
+  "id": "REF-BO0ABQCGVZVD",
+  "status": "COMPLETED",
+  "amount": {
+    "fees": 0,
+    "currency": "BRL",
+    "total": 1000
+  },
+  "type": "PARTIAL",
+  "refundingInstrument": {
+    "creditCard": {
+      "brand": "MASTERCARD",
+      "first6": "555566",
+      "last4": "8884"
+    },
+    "method": "CREDIT_CARD"
+  },
+  "createdAt": "2015-01-13T18:13:06-0200",
+  "_links": {
+    "payment": {
+      "title": "PAY-6N4P8COQU6OS",
+      "href": "https://sandbox.moip.com.br/v2/payments/PAY-6N4P8COQU6OS"
+    },
+    "order": {
+      "title": "ORD-F78K9QTS1UN6",
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-F78K9QTS1UN6"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/refunds/REF-BO0ABQCGVZVD"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="list-refunds-from-a-payment---get" class="anchor" href="#list-refunds-from-a-payment---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>List refunds from a payment - GET</h2>
+
+<h3>
+<a id="endpoint-14" class="anchor" href="#endpoint-14" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/refunds</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (Ok)
+Content-Type: application/json
+
+{
+  "refunds": [
+    {
+      "id": "REF-J4DZBVSRSRMU",
+      "status": "COMPLETED",
+      "type": "FULL",
+      "amount": {
+        "fees": 0,
+        "currency": "BRL",
+        "total": 10000
+      },
+      "refundingInstrument": {
+        "method": "CREDIT_CARD",
+        "creditCard": {
+          "brand": "VISA",
+          "first6": "401200",
+          "last4": "3335"
+        }
+      },
+      "events": [
+        {
+          "createdAt": "2015-12-05T18:57:17-0200",
+          "type": "REFUND.COMPLETED"
+        },
+        {
+          "createdAt": "2015-12-05T18:57:15-0200",
+          "type": "REFUND.REQUESTED"
+        }
+      ],
+      "_links": {
+        "payment": {
+          "title": "PAY-3N7TSKQ26L2I",
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+        },
+        "order": {
+          "title": "ORD-1RQDM20CQW8T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/refunds/REF-I7IEV1RG9T1L"
+        }
+      },
+      "createdAt": "2015-12-05T18:57:15-0200"
+    }
+  ]
+}
+</code></pre>
+
+<h2>
+<a id="list-refunds-from-an-order---get" class="anchor" href="#list-refunds-from-an-order---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>List refunds from an order - GET</h2>
+
+<h3>
+<a id="endpoint-15" class="anchor" href="#endpoint-15" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/void</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (Ok)
+Content-Type: application/json
+
+{
+  "refunds": [
+    {
+      "id": "REF-J4DZBVSRSRMU",
+      "status": "COMPLETED",
+      "type": "FULL",
+      "amount": {
+        "fees": 0,
+        "currency": "BRL",
+        "total": 10000
+      },
+      "refundingInstrument": {
+        "method": "CREDIT_CARD",
+        "creditCard": {
+          "brand": "VISA",
+          "first6": "401200",
+          "last4": "3335"
+        }
+      },
+      "events": [
+        {
+          "createdAt": "2015-12-05T18:57:17-0200",
+          "type": "REFUND.COMPLETED"
+        },
+        {
+          "createdAt": "2015-12-05T18:57:15-0200",
+          "type": "REFUND.REQUESTED"
+        }
+      ],
+      "_links": {
+        "payment": {
+          "title": "PAY-3N7TSKQ26L2I",
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-3N7TSKQ26L2I"
+        },
+        "order": {
+          "title": "ORD-1RQDM20CQW8T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-1RQDM20CQW8T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/refunds/REF-J4DZBVSRSRMU"
+        }
+      },
+      "createdAt": "2015-12-05T18:57:15-0200"
+    }
+  ]
+}
+</code></pre>
+
+<h1>
+<a id="multiorders" class="anchor" href="#multiorders" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MULTIORDERS</h1>
+
+<p>A multiorder is a colletion of orders used to create transactions involving more than one seller in the same cart.
+When you charge a multiorder, Moip creates one payment for each order involved.</p>
+
+<p><strong>IMPORTANT: Refunding a multiorder is not possible, however the order can be refunded individually</strong>
+<strong>IMPORTANT: Multiorder requires the use of OAuth permissions</strong></p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Multiorder ID.</td>
+<td>string(16), response</td>
+</tr>
+<tr>
+<td>ownId</td>
+<td>Multiorder ownId . External reference.</td>
+<td>string(65)</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Multiordr status. Possible values: <code>WAITING</code>, <code>PAID</code>, <code>NOT_PAID</code>, <code>REVERTED</code>.</td>
+<td>string(65), response</td>
+</tr>
+<tr>
+<td>amount.currency</td>
+<td>Currency. Possible values: <code>BRL</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>amount.total</td>
+<td>Total amount charged in cents. Ex: R$10,32 must be informed as 1032.</td>
+<td>integer(12)</td>
+</tr>
+<tr>
+<td>orders</td>
+<td>Order colletion.</td>
+<td>Order colletion</td>
+</tr>
+<tr>
+<td>createdAt</td>
+<td>Date when the resource was created.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>Date when the resource was last updated.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>_links.self.href</td>
+<td>URI to the resource.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.checkout Links to checkout. This link will redirect to the fundingInstrument informed.</td>
+<td>object Checkout Moip</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="create-a-multiorder---post" class="anchor" href="#create-a-multiorder---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a multiorder - POST</h2>
+
+<h3>
+<a id="endpoint-16" class="anchor" href="#endpoint-16" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/multiorders</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "ownId": "meu_multiorder_id",
+  "orders": [
+    {
+      "ownId": "pedido_1_id",
+      "amount": {
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "quantity": 1,
+          "detail": "Seleção Brasileira",
+          "price": 2000
+        }
+      ],
+      "customer": {
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "email": "joao.sousa@email.com",
+        "birthDate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "shippingAddress": 
+          {
+            "street": "Avenida Faria Lima",
+            "streetNumber": 2927,
+            "complement": 8,
+            "district": "Itaim",
+            "city": "Sao Paulo",
+            "state": "SP",
+            "country": "BRA",
+            "zipCode": "01234000"
+          }
+      },
+      "receivers": [
+        {
+          "moipAccount": {
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ]
+    },
+    {
+      "ownId": "pedido_2_id",
+      "amount": {
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "quantity": 1,
+          "detail": "Camiseta da Copa 2014",
+          "price": 1000
+        }
+      ],
+      "customer": {
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "email": "joao.sousa@email.com",
+        "birthDate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "shippingAddress": 
+          {
+            "street": "Avenida Faria Lima",
+            "streetNumber": 2927,
+            "complement": 8,
+            "district": "Itaim",
+            "city": "Sao Paulo",
+            "state": "SP",
+            "country": "BRA",
+            "zipCode": "01234000"
+          }
+      },
+      "receivers": [
+        {
+          "moipAccount": {
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "moipAccount": {
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY",
+          "amount": {
+            "fixed": 55
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MOR-9241K3EFW5DV",
+  "ownId": "meu_multiorder_id",
+  "status": "CREATED",
+  "createdAt": "2015-02-27T11:39:02-0300",
+  "updatedAt": "",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "orders": [
+    {
+      "id": "ORD-4LFGB72U2OK1",
+      "ownId": "pedido_1_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000,
+          "addition": 0,
+          "discount": 0,
+          "items": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "price": 2000,
+          "detail": "Seleção Brasileira",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-IRDAWA6Q260J",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-IRDAWA6Q260J"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 4000
+          },
+          "moipAccount": {
+            "fullname": "Lojista 4 Moip",
+            "login": "lojista_4@labs.moip.com.br",
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-4LFGB72U2OK1"
+        }
+      }
+    },
+    {
+      "id": "ORD-29P0JCAJY8ZU",
+      "ownId": "pedido_2_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000,
+          "addition": 0,
+          "discount": 0,
+          "items": 1000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "price": 1000,
+          "detail": "Camiseta da Copa 2014",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-RE6XARTZD2K7",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-RE6XARTZD2K7"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 3945
+          },
+          "moipAccount": {
+            "fullname": "Lojista 3 Moip",
+            "login": "lojista_3@labs.moip.com.br",
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "amount": {
+            "refunds": 0,
+            "total": 55
+          },
+          "moipAccount": {
+            "fullname": "Maria da Silva Santos",
+            "login": "secundario_1@labs.moip.com.br",
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-29P0JCAJY8ZU"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/MOR-9241K3EFW5DV"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MOR-9241K3EFW5DV"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/MOR-9241K3EFW5DV"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-multiorder---get" class="anchor" href="#retrieve-a-multiorder---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a multiorder - GET</h2>
+
+<h3>
+<a id="endpoint-17" class="anchor" href="#endpoint-17" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: 'OAuth qguusgp05mxaa9adyy8kvo4nuq380z7'
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (Ok)
+Content-Type: application/json
+
+ {
+  "id": "MOR-9241K3EFW5DV",
+  "ownId": "meu_multiorder_id",
+  "status": "CREATED",
+  "createdAt": "2015-02-27T11:39:02-0300",
+  "updatedAt": "",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "orders": [
+    {
+      "id": "ORD-4LFGB72U2OK1",
+      "ownId": "pedido_1_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000,
+          "addition": 0,
+          "discount": 0,
+          "items": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "price": 2000,
+          "detail": "Seleção Brasileira",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-IRDAWA6Q260J",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-IRDAWA6Q260J"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 4000
+          },
+          "moipAccount": {
+            "fullname": "Lojista 4 Moip",
+            "login": "lojista_4@labs.moip.com.br",
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-4LFGB72U2OK1"
+        }
+      }
+    },
+    {
+      "id": "ORD-29P0JCAJY8ZU",
+      "ownId": "pedido_2_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000,
+          "addition": 0,
+          "discount": 0,
+          "items": 1000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "price": 1000,
+          "detail": "Camiseta da Copa 2014",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-RE6XARTZD2K7",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-RE6XARTZD2K7"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 3945
+          },
+          "moipAccount": {
+            "fullname": "Lojista 3 Moip",
+            "login": "lojista_3@labs.moip.com.br",
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "amount": {
+            "refunds": 0,
+            "total": 55
+          },
+          "moipAccount": {
+            "fullname": "Maria da Silva Santos",
+            "login": "secundario_1@labs.moip.com.br",
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-29P0JCAJY8ZU"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/MOR-9241K3EFW5DV"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MOR-9241K3EFW5DV"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/MOR-9241K3EFW5DV"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h1>
+<a id="multipayments" class="anchor" href="#multipayments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MULTIPAYMENTS</h1>
+
+<p>The multipayment is a colletion of multipayments related to a multiorder. This endpoint allows to create different payments for different orders and different sellers at the same time.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>Multipayment ID</td>
+<td>string(16), response</td>
+</tr>
+<tr>
+<td>status</td>
+<td>Status of a multipayment. Possible values: <code>WAITING</code>, <code>IN_ANALYSIS</code>, <code>PRE_AUTHORIZED</code>,<code>AUTHORIZED</code>, <code>CANCELLED</code>, <code>REFUNDED</code>, <code>REVERSED</code>, <code>SETTLED</code>.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>amount.total</td>
+<td>Total amount charged in cents. Ex: R$10,32 must be informed as 1032</td>
+<td>integer(12), response</td>
+</tr>
+<tr>
+<td>amount.currency</td>
+<td>Currency. Possible values: <code>BRL</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>installmentCount</td>
+<td>Number of installments. Minimum 1 and maximum 12.</td>
+<td>integer(2)</td>
+</tr>
+<tr>
+<td>delayCapture</td>
+<td>Used if you need to pre-capture a multipayment. Only available for credit cards.</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>fundingInstruments.method</td>
+<td>Method used. Possible values: <code>CREDIT_CARD</code>, <code>BOLETO</code>, <code>ONLINE_BANK_DEBIT</code>, <code>WALLET</code>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.id</td>
+<td>Credit card ID. This ID can be used in the future to create new multipayments. Internal reference.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.hash</td>
+<td>Encripted credit card data</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.number</td>
+<td>Credit Card number. Requires PCI certification.</td>
+<td>string(19), conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.expirationMonth</td>
+<td>Credit card expiration month. Requires PCI certification.</td>
+<td>integer(2), mandadory when <code>number</code> is used.</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.expirationYear</td>
+<td>Credit card expiration year. Requires PCI certification.</td>
+<td>integer(4), mandadory when <code>number</code> is used.</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.cvc</td>
+<td>Credit card security code.</td>
+<td>integer, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.fullname</td>
+<td>Holder name.</td>
+<td>string(90), <strong>required</strong>*</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.birthdate</td>
+<td>Holder birth date.</td>
+<td>date<code>YYYY-MM-DD</code>, <strong>required</strong>*</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.phone.areaCode</td>
+<td>Area code</td>
+<td>integer(2), optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.phone.countryCode</td>
+<td>Country code</td>
+<td>integer(2), optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.taxDocument.type</td>
+<td>Type of document. Possible value: <code>CPF</code> for social security number, <code>CNPJ</code> for tax identification number.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>fundingInstruments.creditCard.holder.billingAddress</td>
+<td>Billing address.</td>
+<td>object Address optional *</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.expirationDate</td>
+<td>Payment slip expiration date</td>
+<td>date, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.first</td>
+<td>Payment slip instructions, line 1</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.second</td>
+<td>Payment slip instructions, line 2</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.instructionLines.third</td>
+<td>Payment slip instructions, line 3</td>
+<td>string, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.boleto.logoUri</td>
+<td>Logo that will be inserted on payment slip</td>
+<td>link, optional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.bankNumber</td>
+<td>Bank number. Possible values: <code>001</code>, <code>237</code>, <code>341</code>, <code>041</code>. List available <a href="http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias">HERE</a>
+</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.expirationDate</td>
+<td>Debit expiration date.</td>
+<td>date, conditional</td>
+</tr>
+<tr>
+<td>fundingInstruments.onlineBankDebit.returnUri</td>
+<td>Return URI.</td>
+<td>link, conditional</td>
+</tr>
+<tr>
+<td>cancellationDetails.cancelledBy</td>
+<td>The agent that denied the transaction</td>
+<td>Possible values: <code>MOIP</code> ou <code>ACQUIRER</code>.</td>
+</tr>
+<tr>
+<td>cancellationDetails.code</td>
+<td>Denial code</td>
+<td>number, response</td>
+</tr>
+<tr>
+<td>cancellationDetails.description</td>
+<td>A brief description of the denial code.</td>
+<td>string, response</td>
+</tr>
+<tr>
+<td>updatedAt</td>
+<td>Date when the resource was last updated.</td>
+<td>datetime, response</td>
+</tr>
+<tr>
+<td>_links.self.href</td>
+<td>URI to the resource.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.order.title</td>
+<td>Order ID.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>_links.order.href</td>
+<td>Hyperlink to the order.</td>
+<td>link</td>
+</tr>
+<tr>
+<td>_links.checkout</td>
+<td>Links to checkout. This link will redirect to the fundingInstrument informed. object Checkout Moip</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="create-a-multipayment---post" class="anchor" href="#create-a-multipayment---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a multipayment - POST</h2>
+
+<h3>
+<a id="endpoint-18" class="anchor" href="#endpoint-18" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "method": "CREDIT_CARD",
+    "creditCard": {
+      "hash": "HhL0kbhfid+jwgj5l6Kt9EPdetDxQN8s7uKUHDYxDC/XoULjzik44rSda3EcWuOcL17Eb8JjWc1JI7gsuwg9P0rJv1mJQx+d3Dv1puQYz1iRjEWWhnB1bw0gTvnnC/05KbWN5M8oTiugmhVK02Rt2gpbcTtpS7VWyacfgesBJFavYYMljYg8p2YGHXkXrMuQiOCeemKLk420d0OTMBba27jDVVJ663HZDrObnjFXJH/4B5irkj+HO5genV+V4PYoLcOESG4nrI3oFAsMGsLLcdJo0NNvkEmJpn0e9GzureKKFYisYU+BEd9EMr/odS0VMvOYRV65HbPTspIkjl2+3Q==",
+      "holder": {
+        "fullname": "Jose Portador da Silva",
+        "birthdate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        }
+      }
+    }
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-8MMS9Y8TE2IK",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-YVP2NVPMV6YC",
+      "status": "WAITING",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-31VUZTMZVION",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:32-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-H31PC0X9WTHR",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-H31PC0X9WTHR"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-YVP2NVPMV6YC"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:34-0200",
+      "createdAt": "2015-01-14T14:07:32-0200"
+    },
+    {
+      "id": "PAY-78WM5WUDITVI",
+      "status": "WAITING",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-GTVZJDJ47I34",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:33-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-3PJ1LMDGGAZ1",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3PJ1LMDGGAZ1"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-78WM5WUDITVI"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:34-0200",
+      "createdAt": "2015-01-14T14:07:33-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-DT554VQVBYCY"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-8MMS9Y8TE2IK"
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="create-a-multipayment-with-payment-slip---post" class="anchor" href="#create-a-multipayment-with-payment-slip---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a multipayment (with payment slip) - POST</h2>
+
+<h3>
+<a id="endpoint-19" class="anchor" href="#endpoint-19" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "fundingInstrument": {
+    "method": "BOLETO",
+    "boleto": {
+      "expirationDate": "2016-09-30",
+      "instructionLines": {
+        "first": "Primeira linha se instrução",
+        "second": "Segunda linha se instrução",
+        "third": "Terceira linha se instrução"
+      },
+      "logoUri": "http://"
+    }
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-7X3JO2E2AMFL",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "boleto": {
+      "expirationDate": "2016-09-30",
+      "lineCode": "23793.39126 60000.032957 96001.747904 7 69330000008000",
+      "instructionLines": {
+        "third": "Terceira linha se instrução",
+        "second": "Segunda linha se instrução",
+        "first": "Primeira linha se instrução"
+      }
+    },
+    "method": "BOLETO"
+  },
+  "payments": [
+    {
+      "id": "PAY-FJ6MWU4YM7YO",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "boleto": {
+          "expirationDate": "2016-09-30",
+          "instructionLines": {
+            "third": "Terceira linha se instrução",
+            "second": "Segunda linha se instrução",
+            "first": "Primeira linha se instrução"
+          }
+        },
+        "method": "BOLETO"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-OK8E3Z5FDBHQ",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-OK8E3Z5FDBHQ"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-FJ6MWU4YM7YO"
+        }
+      },
+      "updatedAt": "2015-01-14T14:08:27-0200",
+      "createdAt": "2015-01-14T14:08:27-0200"
+    },
+    {
+      "id": "PAY-TRYJXY9V2KR0",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "boleto": {
+          "expirationDate": "2016-09-30",
+          "instructionLines": {
+            "third": "Terceira linha se instrução",
+            "second": "Segunda linha se instrução",
+            "first": "Primeira linha se instrução"
+          }
+        },
+        "method": "BOLETO"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-5D7RIISYWZRI",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-5D7RIISYWZRI"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-TRYJXY9V2KR0"
+        }
+      },
+      "updatedAt": "2015-01-14T14:08:27-0200",
+      "createdAt": "2015-01-14T14:08:27-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-QXZKIF6GPN5V"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-7X3JO2E2AMFL"
+    },
+    "checkout": {
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/MPY-7X3JO2E2AMFL"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="create-a-multipayment-online-bank-debit---post" class="anchor" href="#create-a-multipayment-online-bank-debit---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a multipayment (online bank debit) - POST</h2>
+
+<h3>
+<a id="endpoint-20" class="anchor" href="#endpoint-20" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "fundingInstrument": {
+    "method": "ONLINE_BANK_DEBIT",
+    "onlineBankDebit": {
+      "bankNumber": "001",
+      "expirationDate": "2016-12-30",
+      "returnUri": "http://"
+    }
+  }
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-EP4WDATHIPPU",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-ET37WTEKYWG4",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "method": "ONLINE_BANK_DEBIT",
+        "onlineBankDebit": {
+          "expirationDate": "2016-12-30",
+          "bankNumber": "001",
+          "bankName": "BANCO DO BRASIL S.A."
+        }
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-HWF5X38EW20T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-HWF5X38EW20T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-ET37WTEKYWG4"
+        }
+      },
+      "updatedAt": "2015-01-14T14:15:23-0200",
+      "createdAt": "2015-01-14T14:15:23-0200"
+    },
+    {
+      "id": "PAY-U70D39R97FNV",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "method": "ONLINE_BANK_DEBIT",
+        "onlineBankDebit": {
+          "expirationDate": "2016-12-30",
+          "bankNumber": "001",
+          "bankName": "BANCO DO BRASIL S.A."
+        }
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-KUKNFDIXWZ5T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-KUKNFDIXWZ5T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-U70D39R97FNV"
+        }
+      },
+      "updatedAt": "2015-01-14T14:15:23-0200",
+      "createdAt": "2015-01-14T14:15:23-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-BZ1UC1FEZUWG"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-EP4WDATHIPPU"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MPY-EP4WDATHIPPU"
+      }
+    }
+  }
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-multipayment---get" class="anchor" href="#retrieve-a-multipayment---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a multipayment - GET</h2>
+
+<h3>
+<a id="endpoint-21" class="anchor" href="#endpoint-21" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/multipayments/{multipayment_id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (Ok)
+Content-Type: application/json
+
+ {
+  "id": "MPY-8MMS9Y8TE2IK",
+  "status": "AUTHORIZED",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-YVP2NVPMV6YC",
+      "status": "AUTHORIZED",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-31VUZTMZVION",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:42-0200",
+          "type": "PAYMENT.AUTHORIZED"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:37-0200",
+          "type": "PAYMENT.IN_ANALYSIS"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:32-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-H31PC0X9WTHR",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-H31PC0X9WTHR"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-YVP2NVPMV6YC"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:42-0200",
+      "createdAt": "2015-01-14T14:07:32-0200"
+    },
+    {
+      "id": "PAY-78WM5WUDITVI",
+      "status": "AUTHORIZED",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-GTVZJDJ47I34",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:42-0200",
+          "type": "PAYMENT.AUTHORIZED"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:37-0200",
+          "type": "PAYMENT.IN_ANALYSIS"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:33-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-3PJ1LMDGGAZ1",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3PJ1LMDGGAZ1"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-78WM5WUDITVI"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:42-0200",
+      "createdAt": "2015-01-14T14:07:33-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-DT554VQVBYCY"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-8MMS9Y8TE2IK"
+    }
+  }
+}
+</code></pre>
+
+<h1>
+<a id="oauth" class="anchor" href="#oauth" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>OAuth</h1>
+
+<p>OAuth permissions allows you to obtain information of other Moip accounts in order to create order and payments where these account are involved as receivers.</p>
+
+<p>To do so, you'll need basically finish 3 steps:</p>
+
+<ul>
+<li>Register your APP</li>
+<li>Ask permissions</li>
+<li>Generate accessToken</li>
+</ul>
+
+<h2>
+<a id="registering-your-app" class="anchor" href="#registering-your-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Registering your APP</h2>
+
+<p>To act on behalf of other sellers you need to create a Moip APP.
+<a href="http://dev.moip.com.br/app/">Here</a> you can fill a form that will request to our team the creation of your app, after that you'll receive an email containing:</p>
+
+<ul>
+<li><code>appId</code></li>
+<li><code>appSecret</code></li>
+<li>
+<p><code>accessToken</code></p>
+
+<p>With these you can create the link to ask OAuth permissions and generate de <code>accessToken</code> from the sellers account.</p>
+</li>
+</ul>
+
+<h2>
+<a id="asking-oauth-permissions" class="anchor" href="#asking-oauth-permissions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Asking OAuth permissions</h2>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>responseType</td>
+<td>Defines the type os response. Possible values: <code>CODE</code>
+</td>
+<td>string(4), <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>appId</td>
+<td>APP ID.</td>
+<td>string(16) <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>redirectUri</td>
+<td>Redirect URI</td>
+<td>string(255), <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>Scope of permissions you <strong>required</strong>. Possible values: <code>CREATE_ORDERS</code>,<code>VIEW_ORDERS</code>,<code>CREATE_PAYMENTS</code>,<code>VIEW_PAYMENT</code>
+</td>
+<td>string(255), <strong>required</strong>
+</td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="endpoint-22" class="anchor" href="#endpoint-22" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>GET</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/void</code></p>
+
+<p><strong>URL Example:</strong> <code>https://sandbox.moip.com.br/oauth/authorize?responseType=CODE&amp;appId=APP1A2B3C4D5E6F&amp;redirectUri=https://url.com.br/callback.php&amp;scope=CREATE_ORDERS|VIEW_ORDERS|CREATE_PAYMENTS|VIEW_PAYMENTS</code></p>
+
+<p>The page created with the URL above will look like this:</p>
+
+<p><img src="https://moip.com.br/docs/images/content/moip-connect-pagina-permissao.png" alt="Moip Page"></p>
+
+<p>If the user accepts to give your APP permission, then he will be redirected to your redirect URL, containing his <code>code</code>.</p>
+
+<p><strong>Example:</strong> <code>http://mywebsite.com/?code=ohgrvfk2kdq92w27w66mlntasfh24je&amp;scope=create_orders+view_orders+create_payments+view_payments</code></p>
+
+<h2>
+<a id="generate-oauth-token-accesstoken---post" class="anchor" href="#generate-oauth-token-accesstoken---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Generate OAuth token (accessToken) - POST</h2>
+
+<p>With the <code>code</code> you retrieved from the step above you will be able to get the user <code>acessToken</code> and then use it to make requests on his behelf.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appId</td>
+<td>APP ID</td>
+<td>string(4), <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>appSecret</td>
+<td>Chave privada do aplicativo string(32) <strong>required</strong>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>redirectUri</td>
+<td>Redirect URL. Must be the same you used to require permission.</td>
+<td>string <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>grantType</td>
+<td>Type of request. Possible values: <code>AUTHORIZATION_CODE</code>
+</td>
+<td>string(18) <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>code</td>
+<td>Code generated when the user gave permission to the APP</td>
+<td>string(32) <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>accessToken</td>
+<td>User accessToken.</td>
+<td>string(32) response</td>
+</tr>
+<tr>
+<td>access_token</td>
+<td>User accessToken.</td>
+<td>genéricos string(32) response</td>
+</tr>
+<tr>
+<td>scope</td>
+<td>Scope of permissions granted. Possible values: <code>CREATE_ORDERS</code>,<code>VIEW_ORDERS</code>,<code>CREATE_PAYMENTS</code>,<code>VIEW_PAYMENT</code>
+</td>
+<td>string response</td>
+</tr>
+<tr>
+<td>moipAccountId</td>
+<td>Account ID of the account that gave permission. string(16) response</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h3>
+<a id="endpoint-23" class="anchor" href="#endpoint-23" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/oauth/accesstoken</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>https://sandbox.moip.com.br/oauth/accesstoken
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "appId": "APP-A1B2C3D4E5F6",
+  "appSecret": "aa6494500f7711e38ffd0800200c9a66",
+  "redirectUri": "https://url.com.br/callback",
+  "grantType": "AUTHORIZATION_CODE",
+  "code": "550e8400e29b41d4a716446655440000"
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+  "accessToken": "aa6494500f7711e38ffd0800200c9a77",
+  "access_token": "aa6494500f7711e38ffd0800200c9a77",
+  "scope": "CREATE_ORDERS|VIEW_ORDERS|CREATE_PAYMENTS|VIEW_PAYMENTS",
+  "moipAccountId": "MPA-A1B2C3D4E5F6"
+}
+</code></pre>
+
+<h1>
+<a id="moip-accounts" class="anchor" href="#moip-accounts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MOIP ACCOUNTS</h1>
+
+<p>With this endopint it is possible to create Moip Accounts.</p>
+
+<p>Attributes:</p>
+
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>description</th>
+<th>details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email.address</td>
+<td>Email address that will be used as Login. For transparent accounts the email is used only as a reference since there's no communitation between Moip and these accounts.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.name</td>
+<td>Name.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.lastName</td>
+<td>Last name.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.taxDocument.type</td>
+<td>Type of document. Possible value: <code>CPF</code> for social security number.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.taxDocument.number</td>
+<td>Document number.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.identityDocument.type</td>
+<td>Identity document type. Possible values: <code>RG</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.identityDocument.number</td>
+<td>Number of document.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.identityDocument.issuer</td>
+<td>Issuer of the document.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.identityDocument.issueDate</td>
+<td>Date when the document was issued.</td>
+<td>
+<code>YYYY-MM-DD</code>,  date</td>
+</tr>
+<tr>
+<td>person.birthDate</td>
+<td>Birth date.</td>
+<td>
+<code>YYYY-MM-DD</code>, date</td>
+</tr>
+<tr>
+<td>person.nationality</td>
+<td>Country code according to <a href="http://unstats.un.org/unsd/tradekb/Knowledgebase/Country-Code">ISO-3</a>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.birthPlace</td>
+<td>Birth place.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.parents.mother</td>
+<td>Mother's name.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.parents.father</td>
+<td>Father's name.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.phone.countryCode</td>
+<td>Country code. Possible values: <code>55</code>.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.phone.areaCode</td>
+<td>Area code.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.phone.number</td>
+<td>Phone number.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.alternativePhones.countryCode</td>
+<td>Country code. Possible values: <code>55</code>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.alternativePhones.areaCode</td>
+<td>Area code. string</td>
+<td></td>
+</tr>
+<tr>
+<td>person.alternativePhones.number</td>
+<td>Phone number. string</td>
+<td></td>
+</tr>
+<tr>
+<td>person.address.street</td>
+<td>Street name.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.address.streetNumber</td>
+<td>Number.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.address.complement</td>
+<td>Complement.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>person.address.district</td>
+<td>District.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.address.zipCode</td>
+<td>Zip code.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.address.city</td>
+<td>Cidade. string, <strong>required</strong>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>person.address.state</td>
+<td>State.</td>
+<td>string(2), <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>person.address.country</td>
+<td>Country.</td>
+<td>string(2), <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>company.name</td>
+<td>Trading name.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.businessName</td>
+<td>Company name.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.taxDocument.type</td>
+<td>Company document type. Possible values: <code>CNPJ</code>.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.taxDocument.number</td>
+<td>Tax identification number.  string, conditional</td>
+<td></td>
+</tr>
+<tr>
+<td>company.mainActivity.cnae</td>
+<td>CNAE business code. Example: 82.91-1/00</td>
+<td>string</td>
+</tr>
+<tr>
+<td>company.mainActivity.description</td>
+<td>Business description. Exemple: <code>Atividades de cobranças e informações cadastrais</code>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>company.openingDate</td>
+<td>Company opening date.</td>
+<td>
+<code>YYYY-MM-DD</code>, date</td>
+</tr>
+<tr>
+<td>company.phone.countryCode</td>
+<td>Country code. Possible values: <code>55</code>.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.phone.areaCode</td>
+<td>Area code.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.phone.number</td>
+<td>Phone number.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.street</td>
+<td>Street name.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.streetNumber</td>
+<td>Number</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.complement</td>
+<td>Complemente.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>company.address.district</td>
+<td>District.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.zipCode</td>
+<td>Zip code.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.city</td>
+<td>City.</td>
+<td>string, conditional</td>
+</tr>
+<tr>
+<td>company.address.state</td>
+<td>State</td>
+<td>. string(2), conditional</td>
+</tr>
+<tr>
+<td>company.address.country</td>
+<td>Country code according to <a href="http://unstats.un.org/unsd/tradekb/Knowledgebase/Country-Code">ISO-3</a>
+</td>
+<td>string</td>
+</tr>
+<tr>
+<td>businessSegment.id</td>
+<td>
+<a href="http://dev.moip.com.br/referencia-api/#tabela-de-categorias-de-estabelecimento">Industry ID</a>.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>site</td>
+<td>Website.</td>
+<td>string</td>
+</tr>
+<tr>
+<td>type</td>
+<td>Account type Possible values: <code>CONSUMER</code>, <code>MERCHANT</code>. Ecommerce platforms and marketplace must use <code>MERCHANT</code> for their users.</td>
+<td>string, <strong>required</strong>
+</td>
+</tr>
+<tr>
+<td>transparentAccount</td>
+<td>Used to create transparent account for marketplaces and ecommerce platforms. Theses account are managed by the creator agent and Moip doesn't communicate with them in any way.</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>tosAcceptance.acceptedAt</td>
+<td>Date when the user accepted the contract.</td>
+<td>datetime</td>
+</tr>
+<tr>
+<td>tosAcceptance.ip</td>
+<td>IP (internet protocol)</td>
+<td>string</td>
+</tr>
+<tr>
+<td>tosAcceptance.userAgent</td>
+<td>Agent through whom the user accepted the contract.</td>
+<td>string</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="create-a-moip-account---post" class="anchor" href="#create-a-moip-account---post" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a Moip Account - POST</h2>
+
+<h3>
+<a id="endpoint-24" class="anchor" href="#endpoint-24" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/accounts</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth s4g8gevtyo8w4jv95nr270dutjy5mq0"
+
+{
+    "email": {
+        "address": "DOBXERG0a8@labs.moip.com.br"
+    },
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "taxDocument": {
+            "type": "CPF",
+            "number": "742.520.863-61"
+        }, 
+          "identityDocument": {
+          "type" : "RG",
+          "number": "434322344",
+          "issuer": "SSP",
+          "issueDate": "2000-12-12" 
+          }, 
+        "birthDate": "1990-01-01",
+        "phone": {
+            "countryCode": "55",
+            "areaCode": "11",
+            "number": "965213244"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234-000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "type": "MERCHANT"
+}
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>201 (Created)
+Content-Type: application/json
+
+{
+    "id": "MPA-8307EF11B83E",
+    "channelId": "APP-7KHGFTMYHGLO",
+    "type": "MERCHANT",
+    "transparentAccount": false,
+    "createdAt": "2015-10-29T16:53:25.957Z",
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "birthDate": "1990-01-01",
+        "taxDocument": {
+            "number": "742.520.863-61",
+            "type": "CPF"
+        },
+        "phone": {
+            "number": "965213244",
+            "areaCode": "11",
+            "countryCode": "55"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "email": {
+        "address": "dobxerg0a8@labs.moip.com.br",
+        "confirmed": false
+    },
+    "_links": {
+        "self": {
+            "href": "https://sandbox.moip.com.br/moipaccounts/MPA-8307EF11B83E"
+        }
+    },
+    "login": "dobxerg0a8@labs.moip.com.br",
+    "externalId": "MPA-8307EF11B83E"
+}
+</code></pre>
+
+<h2>
+<a id="retrieve-a-moip-account---get" class="anchor" href="#retrieve-a-moip-account---get" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Retrieve a Moip Account - GET</h2>
+
+<h3>
+<a id="endpoint-25" class="anchor" href="#endpoint-25" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/accounts/{id}</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code>Content-Type: application/json
+Authorization: "OAuth s4g8gevtyo8w4jv95nr270dutjy5mq0"
+</code></pre>
+
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code>200 (Ok)
+Content-Type: application/json
+
+{
+    "id": "MPA-8307EF11B83E",
+    "channelId": "APP-7KHGFTMYHGLO",
+    "type": "MERCHANT",
+    "transparentAccount": false,
+    "createdAt": "2015-10-29T16:53:25.957Z",
+    "person": {
+        "name": "Runscope",
+        "lastName": "Random 9123",
+        "birthDate": "1990-01-01",
+        "taxDocument": {
+            "number": "742.520.863-61",
+            "type": "CPF"
+        },
+        "phone": {
+            "number": "965213244",
+            "areaCode": "11",
+            "countryCode": "55"
+        },
+        "address": {
+            "street": "Av. Brigadeiro Faria Lima",
+            "streetNumber": "2927",
+            "district": "Itaim",
+            "zipCode": "01234000",
+            "city": "São Paulo",
+            "state": "SP",
+            "country": "BRA"
+        }
+    },
+    "email": {
+        "address": "dobxerg0a8@labs.moip.com.br",
+        "confirmed": false
+    },
+    "_links": {
+        "self": {
+            "href": "https://sandbox.moip.com.br/v2/accounts/MPA-8307EF11B83E"
+        }
+    },
+    "login": "dobxerg0a8@labs.moip.com.br",
+    "externalId": "MPA-8307EF11B83E"
+}
+</code></pre>
+
+<h2>
+<a id="action" class="anchor" href="#action" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ACTION</h2>
+
+<h3>
+<a id="endpoint-26" class="anchor" href="#endpoint-26" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Endpoint</h3>
+
+<p><strong>POST</strong> <code>https://sandbox.moip.com.br/v2/payments/{payment_id}/void</code></p>
+
+<p><strong>REQUEST:</strong></p>
+
+<pre><code></code></pre>
+<p><strong>RESPONSE:</strong> </p>
+
+<pre><code></code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Documentation-v2 maintained by <a href="https://github.com/dncosta">dncosta</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
