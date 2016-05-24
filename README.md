@@ -1712,11 +1712,1361 @@ Content-Type: application/json
 }
 ```
 
+# MULTIORDERS
+
+A multiorder is a colletion of orders used to create transactions involving more than one seller in the same cart.
+When you charge a multiorder, Moip creates one payment for each order involved.
+
+**IMPORTANT: Refunding a multiorder is not possible, however the order can be refunded individually**
+**IMPORTANT: Multiorder requires the use of OAuth permissions**
+
+Attributes:
+
+name	| description |	type
+---- | --------- | ----- 
+id	| Multiorder ID. |	string(16), response
+ownId	| Multiorder ownId . External reference. |	string(65)
+status	| Multiordr status. Possible values: `WAITING`, `PAID`, `NOT_PAID`, `REVERTED`. |	string(65), response
+amount.currency |	Currency. Possible values: BRL. |	string
+amount.total |		Total amount charged in cents. Ex: R$10,32 must be informed as 1032. |	integer(12)
+orders |	Order colletion. |	Order colletion
+createdAt	| Date when the resource was created.	| datetime, response
+updatedAt	| Date when the resource was last updated. |	datetime, response
+_links.self.href	| 	URI to the resource. |	link
+_links.checkout	Links to checkout. This link will redirect to the fundingInstrument informed. | object Checkout Moip
+
+## Create a multiorder
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/multiorders`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "ownId": "meu_multiorder_id",
+  "orders": [
+    {
+      "ownId": "pedido_1_id",
+      "amount": {
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "quantity": 1,
+          "detail": "Seleção Brasileira",
+          "price": 2000
+        }
+      ],
+      "customer": {
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "email": "joao.sousa@email.com",
+        "birthDate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "shippingAddress": 
+          {
+            "street": "Avenida Faria Lima",
+            "streetNumber": 2927,
+            "complement": 8,
+            "district": "Itaim",
+            "city": "Sao Paulo",
+            "state": "SP",
+            "country": "BRA",
+            "zipCode": "01234000"
+          }
+      },
+      "receivers": [
+        {
+          "moipAccount": {
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ]
+    },
+    {
+      "ownId": "pedido_2_id",
+      "amount": {
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "quantity": 1,
+          "detail": "Camiseta da Copa 2014",
+          "price": 1000
+        }
+      ],
+      "customer": {
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "email": "joao.sousa@email.com",
+        "birthDate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "shippingAddress": 
+          {
+            "street": "Avenida Faria Lima",
+            "streetNumber": 2927,
+            "complement": 8,
+            "district": "Itaim",
+            "city": "Sao Paulo",
+            "state": "SP",
+            "country": "BRA",
+            "zipCode": "01234000"
+          }
+      },
+      "receivers": [
+        {
+          "moipAccount": {
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "moipAccount": {
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY",
+          "amount": {
+            "fixed": 55
+          }
+        }
+      ]
+    }
+  ]
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MOR-9241K3EFW5DV",
+  "ownId": "meu_multiorder_id",
+  "status": "CREATED",
+  "createdAt": "2015-02-27T11:39:02-0300",
+  "updatedAt": "",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "orders": [
+    {
+      "id": "ORD-4LFGB72U2OK1",
+      "ownId": "pedido_1_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000,
+          "addition": 0,
+          "discount": 0,
+          "items": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "price": 2000,
+          "detail": "Seleção Brasileira",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-IRDAWA6Q260J",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-IRDAWA6Q260J"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 4000
+          },
+          "moipAccount": {
+            "fullname": "Lojista 4 Moip",
+            "login": "lojista_4@labs.moip.com.br",
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-4LFGB72U2OK1"
+        }
+      }
+    },
+    {
+      "id": "ORD-29P0JCAJY8ZU",
+      "ownId": "pedido_2_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000,
+          "addition": 0,
+          "discount": 0,
+          "items": 1000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "price": 1000,
+          "detail": "Camiseta da Copa 2014",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-RE6XARTZD2K7",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-RE6XARTZD2K7"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 3945
+          },
+          "moipAccount": {
+            "fullname": "Lojista 3 Moip",
+            "login": "lojista_3@labs.moip.com.br",
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "amount": {
+            "refunds": 0,
+            "total": 55
+          },
+          "moipAccount": {
+            "fullname": "Maria da Silva Santos",
+            "login": "secundario_1@labs.moip.com.br",
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-29P0JCAJY8ZU"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/MOR-9241K3EFW5DV"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MOR-9241K3EFW5DV"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/MOR-9241K3EFW5DV"
+      }
+    }
+  }
+}
+```
+
+## Retrieve a multiorder
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: 'OAuth qguusgp05mxaa9adyy8kvo4nuq380z7'
+``` 
+
+**RESPONSE:** 
+```
+200 (Ok)
+Content-Type: application/json
+
+ {
+  "id": "MOR-9241K3EFW5DV",
+  "ownId": "meu_multiorder_id",
+  "status": "CREATED",
+  "createdAt": "2015-02-27T11:39:02-0300",
+  "updatedAt": "",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "orders": [
+    {
+      "id": "ORD-4LFGB72U2OK1",
+      "ownId": "pedido_1_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 2000,
+          "addition": 0,
+          "discount": 0,
+          "items": 2000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Verde e Amarelo - Brasil",
+          "price": 2000,
+          "detail": "Seleção Brasileira",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-IRDAWA6Q260J",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-IRDAWA6Q260J"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 4000
+          },
+          "moipAccount": {
+            "fullname": "Lojista 4 Moip",
+            "login": "lojista_4@labs.moip.com.br",
+            "id": "MPA-VB5OGTVPCI52"
+          },
+          "type": "PRIMARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-4LFGB72U2OK1"
+        }
+      }
+    },
+    {
+      "id": "ORD-29P0JCAJY8ZU",
+      "ownId": "pedido_2_id",
+      "status": "CREATED",
+      "createdAt": "2015-02-27T11:39:02-0300",
+      "amount": {
+        "total": 4000,
+        "fees": 0,
+        "refunds": 0,
+        "liquid": 0,
+        "otherReceivers": 4000,
+        "currency": "BRL",
+        "subtotals": {
+          "shipping": 3000,
+          "addition": 0,
+          "discount": 0,
+          "items": 1000
+        }
+      },
+      "items": [
+        {
+          "product": "Camisa Preta - Alemanha",
+          "price": 1000,
+          "detail": "Camiseta da Copa 2014",
+          "quantity": 1
+        }
+      ],
+      "customer": {
+        "id": "CUS-RE6XARTZD2K7",
+        "ownId": "customer[1234]",
+        "fullname": "Joao Sousa",
+        "createdAt": "2015-02-27T11:39:02-0300",
+        "birthDate": "1988-12-30T00:00:00-0200",
+        "email": "joao.sousa@email.com",
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        },
+        "taxDocument": {
+          "type": "CPF",
+          "number": "22222222222"
+        },
+        "shippingAddress": {
+          "zipCode": "01234000",
+          "street": "Avenida Faria Lima",
+          "streetNumber": "2927",
+          "complement": "8",
+          "city": "Sao Paulo",
+          "district": "Itaim",
+          "state": "SP",
+          "country": "BRA"
+        },
+        "_links": {
+          "self": {
+            "href": "https://sandbox.moip.com.br/v2/customers/CUS-RE6XARTZD2K7"
+          }
+        }
+      },
+      "payments": [],
+      "refunds": [],
+      "entries": [],
+      "events": [
+        {
+          "createdAt": "2015-02-27T11:39:02-0300",
+          "description": "",
+          "type": "ORDER.CREATED"
+        }
+      ],
+      "receivers": [
+        {
+          "amount": {
+            "fees": 0,
+            "refunds": 0,
+            "total": 3945
+          },
+          "moipAccount": {
+            "fullname": "Lojista 3 Moip",
+            "login": "lojista_3@labs.moip.com.br",
+            "id": "MPA-IFYRB1HBL73Z"
+          },
+          "type": "PRIMARY"
+        },
+        {
+          "amount": {
+            "refunds": 0,
+            "total": 55
+          },
+          "moipAccount": {
+            "fullname": "Maria da Silva Santos",
+            "login": "secundario_1@labs.moip.com.br",
+            "id": "MPA-KQB1QFWS6QNM"
+          },
+          "type": "SECONDARY"
+        }
+      ],
+      "shippingAddress": {
+        "zipCode": "01234000",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "complement": "8",
+        "city": "Sao Paulo",
+        "district": "Itaim",
+        "state": "SP",
+        "country": "BRA"
+      },
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-29P0JCAJY8ZU"
+        }
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/MOR-9241K3EFW5DV"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MOR-9241K3EFW5DV"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/MOR-9241K3EFW5DV"
+      }
+    }
+  }
+}
+```
+
+# MULTIPAYMENTS
+
+The multipayment is a colletion of multipayments related to a multiorder. This endpoint allows to create different payments for different orders and different sellers at the same time.
+
+Attributes:
+
+name | description | type
+---- | ----------- | ----
+id | Multipayment ID | string(16), response
+status | Status of a multipayment. Possible values: `WAITING`, `IN_ANALYSIS`, `PRE_AUTHORIZED`,`AUTHORIZED`, `CANCELLED`, `REFUNDED`, `REVERSED`, `SETTLED`. | string, response
+amount.total	| Total amount charged in cents. Ex: R$10,32 must be informed as 1032 	| integer(12), response
+amount.currency	| Currency. Possible values: BRL. |	string
+installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
+delayCapture	| Used if you need to pre-capture a multipayment. Only available for credit cards. |	boolean
+fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
+fundingInstruments.creditCard.id | Credit card ID. This ID can be used in the future to create new multipayments. Internal reference. | string, conditional 
+fundingInstruments.creditCard.hash | Encripted credit card data | string, condicional
+fundingInstruments.creditCard.number | Credit Card number. Requires PCI certification. | string(19), conditional
+fundingInstruments.creditCard.expirationMonth | Credit card expiration month. Requires PCI certification. | integer(2), mandadory when `number` is used.
+fundingInstruments.creditCard.expirationYear | Credit card expiration year. Requires PCI certification.| integer(4), mandadory when `number` is used.
+fundingInstruments.creditCard.cvc | Credit card security code. | integer, opcional
+fundingInstruments.creditCard.holder.fullname | Holder name. | string(90), mandatory*
+fundingInstruments.creditCard.holder.birthdate | Holder birth date. | 	date(AAAA-MM-DD), mandatory*
+fundingInstruments.creditCard.holder.phone.areaCode | Area code | integer(2), optional
+fundingInstruments.creditCard.holder.phone.countryCode | Country code | integer(2), optional
+fundingInstruments.creditCard.holder.taxDocument.type | Type of document. Possible value: `CPF` for social security number, `CNPJ` for tax identification number. |	string
+fundingInstruments.creditCard.holder.billingAddress | Billing address. | object Address optional *
+fundingInstruments.boleto.expirationDate | Payment slip expiration date | 	date, mandatory
+fundingInstruments.boleto.instructionLines.first | Payment slip instructions, line 1 | string, optional 
+fundingInstruments.boleto.instructionLines.second | Payment slip instructions, line 2 | string, optional 
+fundingInstruments.boleto.instructionLines.third | Payment slip instructions, line 3 | string, optional
+fundingInstruments.boleto.logoUri | Logo that will be inserted on payment slip | link, optional
+fundingInstruments.onlineBankDebit.bankNumber | Bank number. Possible values: `001`, `237`, `341`, `041`. List available [HERE](http://dev.moip.com.br/referencia-api/#lista-de-instituies-bancrias) | string, condicional
+fundingInstruments.onlineBankDebit.expirationDate | Debit expiration date. | date, condicional
+fundingInstruments.onlineBankDebit.returnUri | Return URI. | link, condicional
+cancellationDetails.cancelledBy | The agent that denied the transaction | Possible values: `MOIP` ou `ACQUIRER`. | string, response
+cancellationDetails.code | Denial code | number, response 
+cancellationDetails.description | A brief description of the denial code. | string, response
+updatedAt	| Date when the resource was last updated.	| datetime, response
+_links.self.href	| URI to the resource. |	link
+_links.order.title	| Order ID. |	string
+_links.order.href	| Hyperlink to the order.	| link
+_links.checkout	| Links to checkout. This link will redirect to the fundingInstrument informed.	object Checkout Moip
 
 
+## Creating a multipayment
 
+### Endpoint
 
+**POST** `https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments`
 
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "method": "CREDIT_CARD",
+    "creditCard": {
+      "hash": "HhL0kbhfid+jwgj5l6Kt9EPdetDxQN8s7uKUHDYxDC/XoULjzik44rSda3EcWuOcL17Eb8JjWc1JI7gsuwg9P0rJv1mJQx+d3Dv1puQYz1iRjEWWhnB1bw0gTvnnC/05KbWN5M8oTiugmhVK02Rt2gpbcTtpS7VWyacfgesBJFavYYMljYg8p2YGHXkXrMuQiOCeemKLk420d0OTMBba27jDVVJ663HZDrObnjFXJH/4B5irkj+HO5genV+V4PYoLcOESG4nrI3oFAsMGsLLcdJo0NNvkEmJpn0e9GzureKKFYisYU+BEd9EMr/odS0VMvOYRV65HbPTspIkjl2+3Q==",
+      "holder": {
+        "fullname": "Jose Portador da Silva",
+        "birthdate": "1988-12-30",
+        "taxDocument": {
+          "type": "CPF",
+          "number": "33333333333"
+        },
+        "phone": {
+          "countryCode": "55",
+          "areaCode": "11",
+          "number": "66778899"
+        }
+      }
+    }
+  }
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-8MMS9Y8TE2IK",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-YVP2NVPMV6YC",
+      "status": "WAITING",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-31VUZTMZVION",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:32-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-H31PC0X9WTHR",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-H31PC0X9WTHR"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-YVP2NVPMV6YC"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:34-0200",
+      "createdAt": "2015-01-14T14:07:32-0200"
+    },
+    {
+      "id": "PAY-78WM5WUDITVI",
+      "status": "WAITING",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-GTVZJDJ47I34",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:33-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-3PJ1LMDGGAZ1",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3PJ1LMDGGAZ1"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-78WM5WUDITVI"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:34-0200",
+      "createdAt": "2015-01-14T14:07:33-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-DT554VQVBYCY"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-8MMS9Y8TE2IK"
+    }
+  }
+}
+```
+
+## Creating a multipayment (with payment slip)
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "fundingInstrument": {
+    "method": "BOLETO",
+    "boleto": {
+      "expirationDate": "2016-09-30",
+      "instructionLines": {
+        "first": "Primeira linha se instrução",
+        "second": "Segunda linha se instrução",
+        "third": "Terceira linha se instrução"
+      },
+      "logoUri": "http://"
+    }
+  }
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-7X3JO2E2AMFL",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "fundingInstrument": {
+    "boleto": {
+      "expirationDate": "2016-09-30",
+      "lineCode": "23793.39126 60000.032957 96001.747904 7 69330000008000",
+      "instructionLines": {
+        "third": "Terceira linha se instrução",
+        "second": "Segunda linha se instrução",
+        "first": "Primeira linha se instrução"
+      }
+    },
+    "method": "BOLETO"
+  },
+  "payments": [
+    {
+      "id": "PAY-FJ6MWU4YM7YO",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "boleto": {
+          "expirationDate": "2016-09-30",
+          "instructionLines": {
+            "third": "Terceira linha se instrução",
+            "second": "Segunda linha se instrução",
+            "first": "Primeira linha se instrução"
+          }
+        },
+        "method": "BOLETO"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-OK8E3Z5FDBHQ",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-OK8E3Z5FDBHQ"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-FJ6MWU4YM7YO"
+        }
+      },
+      "updatedAt": "2015-01-14T14:08:27-0200",
+      "createdAt": "2015-01-14T14:08:27-0200"
+    },
+    {
+      "id": "PAY-TRYJXY9V2KR0",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "boleto": {
+          "expirationDate": "2016-09-30",
+          "instructionLines": {
+            "third": "Terceira linha se instrução",
+            "second": "Segunda linha se instrução",
+            "first": "Primeira linha se instrução"
+          }
+        },
+        "method": "BOLETO"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:08:27-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-5D7RIISYWZRI",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-5D7RIISYWZRI"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-TRYJXY9V2KR0"
+        }
+      },
+      "updatedAt": "2015-01-14T14:08:27-0200",
+      "createdAt": "2015-01-14T14:08:27-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-QXZKIF6GPN5V"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-7X3JO2E2AMFL"
+    },
+    "checkout": {
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/MPY-7X3JO2E2AMFL"
+      }
+    }
+  }
+}
+```
+
+## Creating a multipayment (online bank debit)
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/multiorders/{multiorder_id}/multipayments`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+
+{
+  "fundingInstrument": {
+    "method": "ONLINE_BANK_DEBIT",
+    "onlineBankDebit": {
+      "bankNumber": "001",
+      "expirationDate": "2016-12-30",
+      "returnUri": "http://"
+    }
+  }
+}
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "MPY-EP4WDATHIPPU",
+  "status": "WAITING",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-ET37WTEKYWG4",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "method": "ONLINE_BANK_DEBIT",
+        "onlineBankDebit": {
+          "expirationDate": "2016-12-30",
+          "bankNumber": "001",
+          "bankName": "BANCO DO BRASIL S.A."
+        }
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-HWF5X38EW20T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-HWF5X38EW20T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-ET37WTEKYWG4"
+        }
+      },
+      "updatedAt": "2015-01-14T14:15:23-0200",
+      "createdAt": "2015-01-14T14:15:23-0200"
+    },
+    {
+      "id": "PAY-U70D39R97FNV",
+      "status": "WAITING",
+      "amount": {
+        "fees": 155,
+        "refunds": 0,
+        "liquid": 3845,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "method": "ONLINE_BANK_DEBIT",
+        "onlineBankDebit": {
+          "expirationDate": "2016-12-30",
+          "bankNumber": "001",
+          "bankName": "BANCO DO BRASIL S.A."
+        }
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 155
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.CREATED"
+        },
+        {
+          "createdAt": "2015-01-14T14:15:23-0200",
+          "type": "PAYMENT.WAITING"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-KUKNFDIXWZ5T",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-KUKNFDIXWZ5T"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-U70D39R97FNV"
+        }
+      },
+      "updatedAt": "2015-01-14T14:15:23-0200",
+      "createdAt": "2015-01-14T14:15:23-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-BZ1UC1FEZUWG"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-EP4WDATHIPPU"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/MPY-EP4WDATHIPPU"
+      }
+    }
+  }
+}
+```
+
+## Retrieve a multipayment
+
+### Endpoint
+
+**POST** `https://sandbox.moip.com.br/v2/multipayments/{multipayment_id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "OAuth qguusgp05mxaa9adyy8kvo4nuq380z7"
+``` 
+
+**RESPONSE:** 
+```
+200 (Ok)
+Content-Type: application/json
+
+ {
+  "id": "MPY-8MMS9Y8TE2IK",
+  "status": "AUTHORIZED",
+  "amount": {
+    "currency": "BRL",
+    "total": 8000
+  },
+  "installmentCount": 1,
+  "payments": [
+    {
+      "id": "PAY-YVP2NVPMV6YC",
+      "status": "AUTHORIZED",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-31VUZTMZVION",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:42-0200",
+          "type": "PAYMENT.AUTHORIZED"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:37-0200",
+          "type": "PAYMENT.IN_ANALYSIS"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:32-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-H31PC0X9WTHR",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-H31PC0X9WTHR"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-YVP2NVPMV6YC"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:42-0200",
+      "createdAt": "2015-01-14T14:07:32-0200"
+    },
+    {
+      "id": "PAY-78WM5WUDITVI",
+      "status": "AUTHORIZED",
+      "amount": {
+        "fees": 335,
+        "refunds": 0,
+        "liquid": 3665,
+        "currency": "BRL",
+        "total": 4000
+      },
+      "installmentCount": 1,
+      "fundingInstrument": {
+        "creditCard": {
+          "id": "CRC-GTVZJDJ47I34",
+          "brand": "MASTERCARD",
+          "first6": "555566",
+          "last4": "8884",
+          "holder": {
+            "birthdate": "30/12/1988",
+            "taxDocument": {
+              "type": "CPF",
+              "number": "33333333333"
+            },
+            "fullname": "Jose Portador da Silva"
+          }
+        },
+        "method": "CREDIT_CARD"
+      },
+      "fees": [
+        {
+          "type": "TRANSACTION",
+          "amount": 335
+        }
+      ],
+      "events": [
+        {
+          "createdAt": "2015-01-14T14:07:42-0200",
+          "type": "PAYMENT.AUTHORIZED"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:37-0200",
+          "type": "PAYMENT.IN_ANALYSIS"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:34-0200",
+          "type": "PAYMENT.WAITING"
+        },
+        {
+          "createdAt": "2015-01-14T14:07:33-0200",
+          "type": "PAYMENT.CREATED"
+        }
+      ],
+      "_links": {
+        "order": {
+          "title": "ORD-3PJ1LMDGGAZ1",
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3PJ1LMDGGAZ1"
+        },
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/payments/PAY-78WM5WUDITVI"
+        }
+      },
+      "updatedAt": "2015-01-14T14:07:42-0200",
+      "createdAt": "2015-01-14T14:07:33-0200"
+    }
+  ],
+  "_links": {
+    "multiorder": {
+      "href": "https://sandbox.moip.com.br/v2/multiorders/MOR-DT554VQVBYCY"
+    },
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/multipayments/MPY-8MMS9Y8TE2IK"
+    }
+  }
+}
+```
 
 
 
