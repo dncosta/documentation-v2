@@ -926,7 +926,9 @@ amount.fees	| Moip fees.	| integer(12), response
 amount.refunds |	Total amount refunded.| 	integer(12), response
 amount.liquid	| Liquid amount.	| integer(12), response
 amount.currency	| Currency. Possible values: BRL. |	string
-amount.subtotals	| Aditional values.	| structured
+amount.subtotals.shipping	| Shipping cost. It will be added to the items amount.  Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.addition	| Adition amount. It will be added to the items amount. Ex: R$10,32 must be informed as 1032 | integer(12)
+amount.subtotals.discount	| Discount amount. It will be deducted from the total amount. Ex: R$10,32 must be informed as 1032 | integer(12)
 installmentCount	| Number of installments. Minimum 1 and maximum 12.	| integer(2)
 delayCapture	| Used if you need to pre-capture a payment. Only available for credit cards. |	boolean
 fundingInstruments.method	| Method used. Possible values: `CREDIT_CARD`, `BOLETO`, `ONLINE_BANK_DEBIT`, `WALLET` | 	string
@@ -3163,6 +3165,66 @@ Content-Type: application/json
 }
 ```
 
+# MOIP ACCOUNTS
+
+With this endopint it is possible to create Moip Accounts.
+
+Attributes:
+
+name | description | details 
+email.address	Endereço de email da conta. Será usado como login. Para Contas Transparentes o email é utilizado apenas para localizar uma conta no Moip uma vez que nenhuma comunicação é enviada ao dono da conta.	string, obrigatório
+person.name	Nome.	string, obrigatório
+person.lastName	Sobrenome.	string, obrigatório
+person.taxDocument.type	Tipo do documento. Valores possíveis: CPF.	string, obrigatório
+person.taxDocument.number	Número do documento.	string, obrigatório
+person.identityDocument.type	Tipo do documento. Valores possíveis: RG.	string
+person.identityDocument.number	Número do documento.	string
+person.identityDocument.issuer	Emissor do documento.	string
+person.identityDocument.issueDate	Data de emissão do documento. Formato 2011-01-01.	date
+person.birthDate	Data de nascimento.	date (AAAA-MM-DD)
+person.nationality	País de nascimento. Abreviação com 3 letras	string
+person.birthPlace	Cidade de nascimento.	string
+person.parents.mother	Nome da mãe.	string
+person.parents.father	Nome do pai.	string
+person.phone.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string, obrigatório
+person.phone.areaCode	DDD (código local) do telefone.	string, obrigatório
+person.phone.number	Número do telefone.	string, obrigatório
+person.alternativePhones.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string
+person.alternativePhones.areaCode	DDD (código local) do telefone.	string
+person.alternativePhones.number	Número do telefone.	string
+person.address.street	Nome da rua.	string, obrigatório
+person.address.streetNumber	Número.	string, obrigatório
+person.address.complement	Complemento.	string
+person.address.district	Bairro.	string, obrigatório
+person.address.zipCode	CEP.	string, obrigatório
+person.address.city	Cidade.	string, obrigatório
+person.address.state	Estado. Abreviação com 2 letras	string, obrigatório
+person.address.country	País. Abreviação com 2 letras	string, obrigatório
+company.name	Nome fantasia.	string, condicional
+company.businessName	Razão social.	string, condicional
+company.taxDocument.type	Tipo do documento. Valores possíveis: CNPJ.	string, condicional
+company.taxDocument.number	Número do documento.	string, condicional
+company.mainActivity.cnae	Código CNAE de atividade. Exemplo 82.91-1/00	string
+company.mainActivity.description	Descrição da atividade. Exemplo Atividades de cobranças e informações cadastrais	string
+company.openingDate	Data de abertura. Formato 2011-01-01.	date
+company.phone.countryCode	DDI (código internacional) do telefone. Valores possíveis: 55.	string, condicional
+company.phone.areaCode	DDD (código local) do telefone.	string, condicional
+company.phone.number	Número do telefone.	string, condicional
+company.address.street	Nome da rua.	string, condicional
+company.address.streetNumber	Número.	string, condicional
+company.address.complement	Complemento.	string
+company.address.district	Bairro.	string, condicional
+company.address.zipCode	CEP.	string, condicional
+company.address.city	Cidade.	string, condicional
+company.address.state	Estado. Abreviação com 2 letras	string, condicional
+company.address.country	País. Abreviação com 2 letras	string, condicional
+businessSegment.id	Identificador da categoria, de acordo com a relação de categorias. Ver a Tabela de categorias para ver os valores possíveis.	string
+site	Endereço do site.	string
+type	Tipo da conta. Valores possíveis: CONSUMER, MERCHANT. Plataformas e Marketplaces devem utilizar o valor MERCHANTpara criar contas para os seus usuários.	string, obrigatório
+transparentAccount	Utilizada para criar Contas transparentes dentro do contexto de plataformas e marketplaces. Contas transparentes são gerenciadas pelas plataformas e o Moip não envia nenhuma comunicação para o usuário. Ver mais detalhes na documentação de negócios (incluir o link).	boolean
+tosAcceptance.acceptedAt	Data de aceite dos termos de uso	datetime
+tosAcceptance.ip	Endereço de IP do usuário ao aceitar os termos de uso.	string
+tosAcceptance.userAgent	Agente utilizado pelo usuário no momento do aceite dos termos de uso.	string
 
 
 
