@@ -422,3 +422,560 @@ _links |	Resource links.	| structured, response
 ├─self	| Hyperlink to the resource itself.	| structured
 └─└─href	| URI. |	link
 └─checkout	| Links to Moip checkout.	| object Checkout Moip
+
+## Create an order - POST
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/orders`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+
+{
+  "ownId": "seu_identificador_proprio",
+  "amount": {
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000
+    }
+  },
+  "items": [
+    {
+      "product": "Descrição do pedido",
+      "quantity": 1,
+      "detail": "Mais info...",
+      "price": 1000
+    }
+  ],
+  "customer": {
+    "ownId": "seu_identificador_proprio_de_cliente",
+    "fullname": "Jose Silva",
+    "email": "nome@email.com",
+    "birthDate": "1988-12-30",
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "shippingAddress": {
+      "street": "Avenida Faria Lima",
+      "streetNumber": 2927,
+      "complement": 8,
+      "district": "Itaim",
+      "city": "Sao Paulo",
+      "state": "SP",
+      "country": "BRA",
+      "zipCode": "01234000"
+    }
+  }
+}
+
+``` 
+
+**RESPONSE:** 
+```
+201 (Created)
+Content-Type: application/json
+
+{
+  "id": "ORD-NY92W6N4S220",
+  "ownId": "seu_identificador_proprio",
+  "status": "CREATED",
+  "createdAt": "2015-01-14T11:25:10-0200",
+  "amount": {
+    "total": 2000,
+    "fees": 0,
+    "refunds": 0,
+    "liquid": 0,
+    "otherReceivers": 0,
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000,
+      "addition": 0,
+      "discount": 0,
+      "items": 1000
+    }
+  },
+  "items": [
+    {
+      "detail": "Mais info...",
+      "quantity": 1,
+      "price": 1000,
+      "product": "Descrição do pedido"
+    }
+  ],
+  "customer": {
+    "id": "CUS-73HWY5J45TLO",
+    "ownId": "seu_identificador_proprio_de_cliente",
+    "fullname": "Jose Silva",
+    "createdAt": "2015-01-14T11:25:10-0200",
+    "birthDate": "1988-12-30T00:00:00-0200",
+    "email": "nome@email.com",
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "shippingAddress": {
+      "zipCode": "01234000",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "complement": "8",
+      "city": "Sao Paulo",
+      "district": "Itaim",
+      "state": "SP",
+      "country": "BRA"
+    },
+    "_links": {
+      "self": {
+        "href": "https://sandbox.moip.com.br/v2/customers/CUS-73HWY5J45TLO"
+      }
+    }
+  },
+  "payments": [],
+  "refunds": [],
+  "entries": [],
+  "events": [
+    {
+      "createdAt": "2015-01-14T11:25:10-0200",
+      "description": "",
+      "type": "ORDER.CREATED"
+    }
+  ],
+  "receivers": [
+    {
+      "amount": {
+        "fees": 0,
+        "refunds": 0,
+        "total": 2000
+      },
+      "moipAccount": {
+        "fullname": "Moip SandBox",
+        "login": "integracao@labs.moip.com.br",
+        "id": "MPA-CULBBYHD11"
+      },
+      "type": "PRIMARY"
+    }
+  ],
+  "shippingAddress": {
+    "zipCode": "01234000",
+    "street": "Avenida Faria Lima",
+    "streetNumber": "2927",
+    "complement": "8",
+    "city": "Sao Paulo",
+    "district": "Itaim",
+    "state": "SP",
+    "country": "BRA"
+  },
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-NY92W6N4S220"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBB": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bancobrasil/ORD-NY92W6N4S220"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBradesco": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bradesco/ORD-NY92W6N4S220"
+      },
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/ORD-NY92W6N4S220"
+      },
+      "payOnlineBankDebitBanrisul": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/banrisul/ORD-NY92W6N4S220"
+      }
+    }
+  }
+}
+```
+
+## Retrieve an order - GET
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/orders/{order_id}`
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+{
+  "id": "ORD-4HY0KOA9Q73F",
+  "ownId": "meu_pedido_sandbox_xxxxx",
+  "status": "CREATED",
+  "createdAt": "2015-01-14T11:39:15-0200",
+  "amount": {
+    "total": 2000,
+    "fees": 0,
+    "refunds": 0,
+    "liquid": 0,
+    "otherReceivers": 0,
+    "currency": "BRL",
+    "subtotals": {
+      "shipping": 1000,
+      "addition": 0,
+      "discount": 0,
+      "items": 1000
+    }
+  },
+  "items": [
+    {
+      "detail": "Mais info...",
+      "quantity": 1,
+      "price": 1000,
+      "product": "Produto de testes Sandbox - xxxx"
+    }
+  ],
+  "addresses": [
+    {
+      "city": "Sao Paulo",
+      "complement": "8",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "zipCode": "01234000",
+      "district": "Itaim",
+      "state": "SP",
+      "type": "SHIPPING",
+      "country": "BRA"
+    }
+  ],
+  "customer": {
+    "id": "CUS-Y6L4AGQN8HKQ",
+    "ownId": "meu_id_sandbox_1231234",
+    "fullname": "Jose Silva",
+    "createdAt": "2015-01-14T11:28:22-0200",
+    "birthDate": "1988-12-30T00:00:00-0200",
+    "email": "jose_silva0@email.com",
+    "phone": {
+      "countryCode": "55",
+      "areaCode": "11",
+      "number": "66778899"
+    },
+    "taxDocument": {
+      "type": "CPF",
+      "number": "22222222222"
+    },
+    "addresses": [
+      {
+        "city": "Sao Paulo",
+        "complement": "8",
+        "street": "Avenida Faria Lima",
+        "streetNumber": "2927",
+        "zipCode": "01234000",
+        "district": "Itaim",
+        "state": "SP",
+        "type": "SHIPPING",
+        "country": "BRA"
+      }
+    ],
+    "shippingAddress": {
+      "zipCode": "01234000",
+      "street": "Avenida Faria Lima",
+      "streetNumber": "2927",
+      "complement": "8",
+      "city": "Sao Paulo",
+      "district": "Itaim",
+      "state": "SP",
+      "country": "BRA"
+    },
+    "_links": {
+      "self": {
+        "href": "https://sandbox.moip.com.br/v2/customers/CUS-Y6L4AGQN8HKQ"
+      }
+    }
+  },
+  "payments": [],
+  "refunds": [],
+  "entries": [],
+  "events": [
+    {
+      "createdAt": "2015-01-14T11:39:15-0200",
+      "description": "",
+      "type": "ORDER.CREATED"
+    }
+  ],
+  "receivers": [
+    {
+      "amount": {
+        "fees": 0,
+        "refunds": 0,
+        "total": 2000
+      },
+      "moipAccount": {
+        "fullname": "Moip SandBox",
+        "login": "integracao@labs.moip.com.br",
+        "id": "MPA-CULBBYHD11"
+      },
+      "type": "PRIMARY"
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://sandbox.moip.com.br/v2/orders/ORD-4HY0KOA9Q73F"
+    },
+    "checkout": {
+      "payOnlineBankDebitItau": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/itau/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBB": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bancobrasil/ORD-4HY0KOA9Q73F"
+      },
+      "payCreditCard": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/creditcard/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBradesco": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/bradesco/ORD-4HY0KOA9Q73F"
+      },
+      "payBoleto": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/boleto/ORD-4HY0KOA9Q73F"
+      },
+      "payOnlineBankDebitBanrisul": {
+        "redirectHref": "https://checkout-sandbox.moip.com.br/debit/banrisul/ORD-4HY0KOA9Q73F"
+      }
+    }
+  }
+}
+```
+
+## Retrieve orders list
+
+### Endpoint
+
+This endpoint allows you to list orders using filters.
+
+**GET** `https://sandbox.moip.com.br/v2/orders`
+
+Example with filters: `https://sandbox.moip.com.br/v2/orders?q=pagamento do pedido&filters=status::in(PAID,WAITING)|paymentMethod::in(CREDIT_CARD,BOLETO)|amount::bt(5000,10000)&limit=3&offset=0`
+
+***IMPORTANT:** Make sure you are using URL encode to make requests with filters.*
+
+**REQUEST:**
+```
+Content-Type: application/json
+Authorization: "Basic MDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDEwMTAxMDE6QUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQkFCQUJBQg=="
+``` 
+
+**RESPONSE:** 
+```
+200 (OK)
+Content-Type: application/json
+
+{
+  "_links": {
+    "next": {
+      "href": "https://sandbox.moip.com.br/v2/orders?q=jose silva&filters=createdAt::bt(2014-11-08,2015-05-07)&limit=3&offset=3"
+    },
+    "previous": {
+      "href": "https://sandbox.moip.com.br/v2/orders?q=jose silva&filters=createdAt::bt(2014-11-08,2015-05-07)&limit=3&offset=0"
+    }
+  },
+  "summary": {
+    "count": 497,
+    "amount": 1914750
+  },
+  "orders": [
+    {
+      "id": "380561",
+      "ownId": "sandbox_v2_1430950122",
+      "externalId": "ORD-U052MFZ4M414",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430950122@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T19:09:06Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-U052MFZ4M414"
+        }
+      },
+      "createdAt": "2015-05-06T19:08:43Z",
+      "updatedAt": "2015-05-06T19:08:48Z"
+    },
+    {
+      "id": "380560",
+      "ownId": "sandbox_v2_1430950121",
+      "externalId": "ORD-8MFXXQTTPEJ4",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430950121@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T19:09:06Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-8MFXXQTTPEJ4"
+        }
+      },
+      "createdAt": "2015-05-06T19:08:41Z",
+      "updatedAt": "2015-05-06T19:08:48Z"
+    },
+    {
+      "id": "380456",
+      "ownId": "sandbox_v2_1430942777",
+      "externalId": "ORD-3XCFS4BTBO38",
+      "status": "PAID",
+      "blocked": false,
+      "amount": {
+        "total": 4000,
+        "addition": 0,
+        "fees": 335,
+        "deduction": 0,
+        "otherReceivers": 0,
+        "currency": "BRL"
+      },
+      "receivers": [
+        {
+          "type": "PRIMARY",
+          "moipAccount": {
+            "id": "MPA-CULBBYHD11"
+          }
+        }
+      ],
+      "customer": {
+        "fullname": "jose silva",
+        "email": "sandbox_v2_1430942777@email.com"
+      },
+      "items": [
+        {
+          "product": null
+        }
+      ],
+      "payments": [
+        {
+          "installmentCount": 1,
+          "fundingInstrument": {
+            "method": "CREDIT_CARD",
+            "institution": "VISA"
+          }
+        }
+      ],
+      "events": [
+        {
+          "type": "PAYMENT.AUTHORIZED",
+          "createdAt": "2015-05-06T17:06:53Z"
+        }
+      ],
+      "_links": {
+        "self": {
+          "href": "https://sandbox.moip.com.br/v2/orders/ORD-3XCFS4BTBO38"
+        }
+      },
+      "createdAt": "2015-05-06T17:06:23Z",
+      "updatedAt": "2015-05-06T17:06:42Z"
+    }
+  ]
+}
+```
+
+
+
+## ACTION
+
+### Endpoint
+
+**GET** `https://sandbox.moip.com.br/v2/customers/{customer_id}`
+
+**REQUEST:**
+```
+``` 
+
+**RESPONSE:** 
+```
+```
