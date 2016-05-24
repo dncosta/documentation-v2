@@ -369,7 +369,6 @@ Attributes:
 
 name	| description	| details
 ---- |------------ | -------
-
 id | 	Order ID.	| string(16), response
 ownId	| Own id of an order. External reference.	| string(65)
 status	| Orders status. Possible values: CREATED, WAITING, PAID, NOT_PAID, REVERTED.	| string, response
